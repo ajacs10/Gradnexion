@@ -2,6 +2,7 @@
 import React, { useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import journalContent from '../data/journalContent';
+import { t } from '../i18n';
 import './ArticlePage.css';
 
 function ArticlePage() {
@@ -21,7 +22,7 @@ function ArticlePage() {
   const [isAnonymous, setIsAnonymous] = useState(false); // NOVO: Estado para anonimato
 
   // Lista de emojis para as reações
-  const reactionEmojis = ['👍', '😂', '❤️', '🔨', '👀'];
+  const reactionEmojis = t.article.reactions;
 
   const getInitialReactions = () => {
     const initialReactions = {};
@@ -34,15 +35,15 @@ function ArticlePage() {
   const [comments, setComments] = useState([
     { 
       id: 1, 
-      author: 'Ana Silva', 
-      text: 'Excelente artigo! O aumento da propina é uma grande preocupação para todos nós.',
-      reactions: { '👍': 3, '❤️': 1, '😂': 0, '🔨': 0, '👀': 0 }
+      author: 'Ana Silva',
+      text: 'Este formato ajuda muito quem procura referências por curso.',
+      reactions: { Gostei: 3, Útil: 1, Inspira: 0, 'Ver depois': 0 }
     },
     { 
       id: 2, 
-      author: 'Pedro Costa', 
-      text: 'Precisamos de mais transparência da direção do INSUTEC sobre estes investimentos.',
-      reactions: { '👍': 5, '😂': 0, '❤️': 0, '🔨': 0, '👀': 0 }
+      author: 'Pedro Costa',
+      text: 'Seria bom ter também links para portfólios e projetos finais.',
+      reactions: { Gostei: 5, Útil: 2, Inspira: 0, 'Ver depois': 1 }
     }
   ]);
 
@@ -50,7 +51,7 @@ function ArticlePage() {
     e.preventDefault();
     if (newComment.trim() || audioBlob) {
       // NOVO: Define o autor com base no estado do anonimato
-      const author = isAnonymous ? 'Anónimo' : 'Visitante';
+      const author = isAnonymous ? t.article.anonymousAuthor : t.article.visitorAuthor;
       const newId = comments.length > 0 ? comments[comments.length - 1].id + 1 : 1;
       
       const newCommentData = {
@@ -105,7 +106,7 @@ function ArticlePage() {
       setAudioBlob(null);
     } catch (err) {
       console.error("Erro ao aceder ao microfone: ", err);
-      alert("Não foi possível aceder ao microfone. Verifique as permissões.");
+      alert(t.article.microphoneError);
     }
   };
 
@@ -119,29 +120,23 @@ function ArticlePage() {
   if (!article) {
     return (
       <main className="article-page-container">
-        <h2>Artigo não encontrado.</h2>
-      </main>
-    );
-  }
-
-  if (article.dislikes >= 20) {
-    return (
-      <main className="article-page-container">
-        <h2>Este artigo foi ocultado devido a um grande número de descurtidas.</h2>
+        <h2>{t.common.notFoundArticle}</h2>
       </main>
     );
   }
 
   return (
     <main className="article-page-container">
+      {article.imageUrl && <img className="article-hero-image" src={article.imageUrl} alt={article.title} />}
+      <p className="article-category">{article.category}</p>
       <h1 className="article-title">{article.title}</h1>
-      <p className="article-details">Por: {article.author} | {article.time}</p>
+      <p className="article-details">{t.common.by}: {article.author} | {article.time}</p>
       <div className="article-content">
         <p>{article.fullText || article.description}</p>
       </div>
 
       <section className="comments-section">
-        <h3>Comentários</h3>
+        <h3>{t.article.comments}</h3>
         <div className="comments-list">
           {comments.length > 0 ? (
             comments.map((comment) => (
@@ -164,19 +159,19 @@ function ArticlePage() {
               </div>
             ))
           ) : (
-            <p>Seja o primeiro a comentar!</p>
+            <p>{t.article.firstComment}</p>
           )}
         </div>
 
         <form className="comment-form" onSubmit={handleCommentSubmit}>
           <div className="comment-input-area">
             {isRecording ? (
-              <p className="recording-status">A gravar... Clique em 'Parar' para terminar.</p>
+              <p className="recording-status">{t.article.recording}</p>
             ) : (
               <textarea
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
-                placeholder="Escreva o seu comentário..."
+                placeholder={t.article.commentPlaceholder}
                 disabled={isRecording || audioBlob}
                 required={!audioBlob}
               />
@@ -184,16 +179,16 @@ function ArticlePage() {
             
             {audioBlob && (
               <div className="audio-preview">
-                <p>Pré-visualização do áudio:</p>
+                <p>{t.article.audioPreview}</p>
                 <audio src={URL.createObjectURL(audioBlob)} controls />
-                <button type="button" onClick={() => setAudioBlob(null)} className="remove-audio-button">Remover Áudio</button>
+                <button type="button" onClick={() => setAudioBlob(null)} className="remove-audio-button">{t.article.removeAudio}</button>
               </div>
             )}
           </div>
           
           <div className="comment-options"> {/* NOVO: Container para opções */}
             <label className="checkbox-container">
-              Comentar como Anónimo
+              {t.article.anonymousComment}
               <input
                 type="checkbox"
                 checked={isAnonymous}
@@ -212,7 +207,7 @@ function ArticlePage() {
                   className="record-button"
                   disabled={!!newComment}
                 >
-                  Gravar Áudio
+                  {t.article.recordAudio}
                 </button>
               ) : (
                 <button 
@@ -220,12 +215,12 @@ function ArticlePage() {
                   onClick={stopRecording} 
                   className="stop-button"
                 >
-                  Parar Gravação
+                  {t.article.stopRecording}
                 </button>
               )}
             </div>
             <button type="submit" className="submit-button" disabled={isRecording}>
-              Comentar
+              {t.article.submit}
             </button>
           </div>
         </form>

@@ -1,0 +1,6 @@
+node_modules
+dist
+.git
+backend/node_modules
+backend/uploads
+npm-debug.log

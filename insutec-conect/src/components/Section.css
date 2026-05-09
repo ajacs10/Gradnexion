@@ -1,137 +1,82 @@
 /* src/components/Section.css */
-
-/* --- Estilos da Seção Principal --- */
 .generic-section {
-  padding: 0;
-  margin-bottom: 2rem;
-  color: white;
+  color: #101828;
 }
 
 .section-title {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #f7d046;
-  margin-bottom: 1.5rem;
-  border-bottom: 2px solid #f7d046;
-  padding-bottom: 0.5rem;
+  margin: 0 0 1rem;
+  color: #101828;
+  font-size: clamp(2rem, 4vw, 3.1rem);
+  line-height: 1;
 }
 
 .section-content {
   display: grid;
-  /* NOVO: Combinação de auto-fill e minmax para layout flexível e responsivo */
-  grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
 }
 
-/* --- Estilos do Card de Artigo --- */
 .content-card {
-  background-color: #2d3748;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  border-radius: 0.5rem;
-
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-
-  height: auto;
   overflow: hidden;
-
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  cursor: pointer;
-}
-
-.content-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.5);
+  border: 1px solid #e4e7ec;
+  border-radius: 8px;
+  background: #ffffff;
 }
 
 .card-link {
-  text-decoration: none;
-  color: inherit;
   display: flex;
+  flex: 1;
   flex-direction: column;
-  flex-grow: 1;
+  color: inherit;
+  text-decoration: none;
 }
 
-/* Estilos para a imagem dentro do card */
 .card-image {
   width: 100%;
-  height: 150px;
-  object-fit: cover; /* ESSENCIAL: Faz a imagem se adaptar e preencher o espaço */
-  border-top-left-radius: 0.5rem;
-  border-top-right-radius: 0.5rem;
-  margin-bottom: 1rem;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
 }
 
 .card-text-content {
-  padding: 0 1.5rem;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+  padding: 1rem;
+}
+
+.card-category {
+  color: #b42318;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
 }
 
 .card-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: #f7d046;
+  margin: 0.45rem 0;
+  color: #101828;
+  font-size: 1.2rem;
+  line-height: 1.25;
 }
 
 .card-description,
 .card-details {
   margin: 0;
-  line-height: 1.5;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  line-clamp: 3;
+  color: #475467;
+  line-height: 1.6;
 }
 
 .card-details {
-  font-size: 0.875rem;
-  color: #a0aec0;
-  padding: 0 1.5rem 1.5rem;
+  padding: 0 1rem 1rem;
+  font-size: 0.88rem;
+  font-weight: 700;
 }
 
-/* --- Estilos dos Botões de Interação --- */
-.card-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  margin-top: 1rem;
-  padding: 0 1.5rem 1.5rem;
-}
-
-.action-button {
-  background-color: rgba(59, 66, 81, 0.7);
-  color: white;
-  border: none;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.3rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  font-size: 0.9rem;
-}
-
-.action-button.like:hover {
-  background-color: #4CAF50;
-}
-
-.action-button.dislike:hover {
-  background-color: #F44336;
-}
-
-
-/* --- Media Query para Responsividade --- */
-@media (max-width: 900px) {
+@media (max-width: 940px) {
   .section-content {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 620px) {
   .section-content {
     grid-template-columns: 1fr;
   }

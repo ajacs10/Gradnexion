@@ -1,22 +1,87 @@
 /* src/components/AboutUs.css */
 .about-us-container {
-  background-color: #2d3748;
-  padding: 2rem;
-  margin: 2rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  color: white;
-  min-height: 50vh;
+  width: 100%;
+  padding: 4rem 32px;
+  color: #101828;
 }
 
-.about-us-title {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #f7d046;
-  margin-bottom: 1rem;
+.about-us-container h1 {
+  max-width: 860px;
+  margin: 0;
+  font-size: clamp(2.4rem, 5vw, 4.6rem);
+  line-height: 1;
 }
 
 .about-us-text {
-  font-size: 1.125rem;
+  max-width: 780px;
+  color: #475467;
+  font-size: 1.08rem;
+  line-height: 1.8;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.about-grid article,
+.about-courses {
+  border: 1px solid #e4e7ec;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 1rem;
+}
+
+.about-grid h2,
+.about-courses h2 {
+  margin: 0 0 0.55rem;
+  color: #101828;
+}
+
+.about-grid p {
+  margin: 0;
+  color: #475467;
   line-height: 1.6;
+}
+
+.about-courses {
+  margin-top: 1rem;
+}
+
+.about-courses div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.about-steps {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: #475467;
+  line-height: 1.8;
+}
+
+.about-steps li + li {
+  margin-top: 0.45rem;
+}
+
+.about-courses span {
+  border-radius: 999px;
+  background: #f2f4f7;
+  color: #344054;
+  padding: 0.45rem 0.7rem;
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+@media (max-width: 760px) {
+  .about-us-container {
+    padding: 2.5rem 12px 4rem;
+  }
+
+  .about-grid {
+    grid-template-columns: 1fr;
+  }
 }

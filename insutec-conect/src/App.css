@@ -1,25 +1,72 @@
 /* src/App.css */
-
-body {
-  margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #882b2b; /* Cor de fundo de fallback */
-  
-  /* A imagem de fundo agora é aplicada ao body para cobrir toda a tela */
-  background-image: url('./assets/imagem/background.jpg'); 
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed; /* Opcional: fixa a imagem para não rolar com a página */
-}
-
-/* O wrapper para centralizar o conteúdo */
-.main-content-wrapper {
-  max-width: 1200px;
-  margin: 0 auto;
+.app-container {
   min-height: 100vh;
-  padding: 2rem 1rem;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
-/* Outros estilos para elementos globais... */
+.site-footer {
+  width: 100%;
+  border-top: 1px solid #e4e7ec;
+  background: #101828;
+  color: #d0d5dd;
+  padding: 2.4rem 32px 1.4rem;
+}
+
+.site-footer-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1.4rem;
+}
+
+.site-footer nav,
+.site-footer address {
+  display: grid;
+  align-content: start;
+  gap: 0.45rem;
+  font-style: normal;
+}
+
+.site-footer h2 {
+  margin: 0 0 0.35rem;
+  color: #ffffff;
+  font-size: 1rem;
+}
+
+.site-footer a {
+  color: #d0d5dd;
+  text-decoration: none;
+}
+
+.site-footer a:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+.site-footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  padding-top: 1rem;
+  color: #98a2b3;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.site-footer-bottom div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+@media (max-width: 700px) {
+  .site-footer {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .site-footer-grid {
+    grid-template-columns: 1fr;
+  }
+}

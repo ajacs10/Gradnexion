@@ -1,220 +1,208 @@
 /* src/components/ArticlePage.css */
 .article-page-container {
-  background-color: #2d3748;
-  color: white;
-  padding: 2rem;
-  margin: 2rem;
-  border-radius: 0.5rem;
+  width: 100%;
+  padding: 3rem 32px 4rem;
+  color: #101828;
+}
+
+.article-hero-image {
+  width: 100%;
+  max-height: 430px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 1.4rem;
+}
+
+.article-category {
+  margin: 0 0 0.6rem;
+  color: #b42318;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
 }
 
 .article-title {
-  color: #f7d046;
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
+  margin: 0;
+  color: #101828;
+  font-size: clamp(2.3rem, 5vw, 4.3rem);
+  line-height: 1;
 }
 
 .article-details {
-  font-size: 1rem;
-  color: #a0aec0;
-  margin-bottom: 1.5rem;
+  margin: 1rem 0 1.5rem;
+  color: #667085;
+  font-weight: 700;
 }
 
 .article-content p {
-  font-size: 1.1rem;
-  line-height: 1.6;
+  color: #344054;
+  font-size: 1.12rem;
+  line-height: 1.85;
 }
 
-/* --- Estilos da Seção de Comentários --- */
 .comments-section {
   margin-top: 3rem;
   padding-top: 1.5rem;
-  border-top: 1px solid #4a5568;
+  border-top: 1px solid #e4e7ec;
 }
 
 .comments-section h3 {
-  font-size: 2rem;
-  color: #f7d046;
-  margin-bottom: 1.5rem;
+  margin: 0 0 1rem;
+  color: #101828;
+  font-size: 1.7rem;
+}
+
+.comments-list {
+  display: grid;
+  gap: 0.8rem;
 }
 
 .comment {
-  background-color: #4a5568;
+  border: 1px solid #e4e7ec;
+  border-radius: 8px;
+  background: #ffffff;
   padding: 1rem;
-  border-radius: 0.5rem;
-  margin-bottom: 1rem;
-  position: relative; /* Essencial para posicionar os botões de reação */
-  transition: background-color 0.2s;
-}
-
-/* Altera a cor de fundo no hover para dar um feedback visual */
-.comment:hover {
-  background-color: #556075;
 }
 
 .comment-author {
-  color: #f7d046;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.45rem;
+  color: #101828;
 }
 
 .comment-text {
   margin: 0;
-  line-height: 1.4;
+  color: #475467;
+  line-height: 1.55;
 }
 
-/* --- Estilos para as Reações dos Comentários (com hover) --- */
 .comment-reactions {
-  display: none; /* ESCONDE os botões por padrão */
-  position: absolute; /* Posiciona os botões fora do fluxo do texto */
-  top: 0.5rem;
-  right: 0.5rem;
-  gap: 0.5rem;
-}
-
-/* MOSTRA os botões quando o cursor está sobre o comentário */
-.comment:hover .comment-reactions {
   display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.8rem;
 }
 
 .reaction-button {
-  background-color: #3b4251;
-  color: white;
-  border: 1px solid #555;
-  padding: 0.3rem 0.6rem;
-  border-radius: 20px;
+  min-height: 34px;
+  border: 1px solid #d0d5dd;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #344054;
+  padding: 0 0.7rem;
   cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.2s;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
 }
 
 .reaction-button:hover {
-  background-color: #555;
+  border-color: #b42318;
+  color: #b42318;
 }
 
-
-/* --- Estilos do Formulário de Comentários --- */
 .comment-form {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-top: 1.5rem;
+  display: grid;
+  gap: 0.8rem;
+  margin-top: 1.2rem;
 }
 
 .comment-form textarea {
   width: 100%;
-  height: 100px;
-  padding: 0.75rem;
-  border: 1px solid #a0aec0;
-  border-radius: 0.5rem;
-  background-color: #3b4251;
-  color: white;
+  min-height: 116px;
+  box-sizing: border-box;
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #101828;
+  padding: 0.85rem;
   resize: vertical;
+  font: inherit;
 }
 
-.comment-form button {
-  background-color: #f7d046;
-  color: #2d3748;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.comment-form button:hover {
-  background-color: #e5b830;
-}
-.comment-input-area {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.recording-status {
-  background-color: #f7d046;
-  color: #2d3748;
+.recording-status,
+.audio-preview {
+  border-radius: 8px;
+  background: #fef3f2;
+  color: #b42318;
   padding: 1rem;
-  border-radius: 0.5rem;
-  text-align: center;
-  font-weight: bold;
-}
-
-.comment-actions-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-}
-
-.record-buttons {
-  flex-grow: 1;
-}
-
-.record-button, .stop-button {
-  width: 100%;
-  background-color: #e5b830;
-  color: #2d3748;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.stop-button {
-  background-color: #ff4d4d;
-}
-
-.stop-button:hover {
-  background-color: #e60000;
-}
-
-.submit-button {
-  background-color: #f7d046;
-  color: #2d3748;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  flex-grow: 1;
-}
-
-.submit-button:hover {
-  background-color: #e5b830;
+  font-weight: 800;
 }
 
 .audio-preview {
-  background-color: #3b4251;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  align-items: center;
+  display: grid;
+  gap: 0.6rem;
 }
 
-.audio-preview audio {
-  width: 100%;
+.audio-preview p {
+  margin: 0;
 }
 
-.remove-audio-button {
-  background-color: #a0aec0;
-  color: #2d3748;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 0.3rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.remove-audio-button:hover {
-  background-color: #8993a4;
-}
-
+.audio-preview audio,
 .audio-comment {
   width: 100%;
-  margin-top: 0.5rem;
+}
+
+.comment-options {
+  color: #344054;
+  font-weight: 800;
+}
+
+.checkbox-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.checkbox-container input {
+  width: 18px;
+  height: 18px;
+}
+
+.checkmark {
+  display: none;
+}
+
+.comment-actions-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+}
+
+.comment-form button {
+  min-height: 46px;
+  border: 1px solid #b42318;
+  border-radius: 8px;
+  background: #b42318;
+  color: #ffffff;
+  padding: 0 1rem;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 900;
+}
+
+.comment-form button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.remove-audio-button,
+.comment-form .record-button {
+  border-color: #d0d5dd;
+  background: #ffffff;
+  color: #101828;
+}
+
+.comment-form .stop-button {
+  background: #101828;
+  border-color: #101828;
+}
+
+@media (max-width: 640px) {
+  .article-page-container {
+    padding: 2rem 12px 4rem;
+  }
+
+  .comment-actions-row {
+    grid-template-columns: 1fr;
+  }
 }
