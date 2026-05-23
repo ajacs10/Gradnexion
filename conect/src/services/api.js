@@ -34,3 +34,12 @@ export async function apiPatch(path, body) {
     body: isForm ? body : JSON.stringify(body),
   });
 }
+
+export async function apiDelete(path, body) {
+  const isForm = body instanceof FormData;
+  return request(path, {
+    method: 'DELETE',
+    headers: body && !isForm ? { 'Content-Type': 'application/json' } : undefined,
+    body: body ? (isForm ? body : JSON.stringify(body)) : undefined,
+  });
+}

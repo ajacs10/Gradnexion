@@ -71,58 +71,9 @@
     radial-gradient(circle at 74% 20%, rgba(96, 165, 250, 0.55) 0 4px, transparent 5px),
     radial-gradient(circle at 61% 58%, rgba(96, 165, 250, 0.55) 0 5px, transparent 6px),
     radial-gradient(circle at 87% 36%, rgba(96, 165, 250, 0.55) 0 4px, transparent 5px);
-}
-
-.network-node {
-  position: absolute;
-  display: grid;
-  place-items: center;
-  width: 92px;
-  height: 92px;
-  border: 2px solid rgba(79, 70, 229, 0.62);
-  border-radius: 50%;
-  background: rgba(15, 23, 42, 0.28);
-  color: #dbeafe;
-  font-weight: 900;
-  box-shadow: 0 0 34px rgba(37, 99, 235, 0.28);
-}
-
-.node-a {
-  top: 8%;
-  right: 31%;
-}
-
-.node-b {
-  top: 34%;
-  right: 40%;
-}
-
-.node-c {
-  bottom: 28%;
-  right: 50%;
-}
-
-.node-d {
-  top: 16%;
-  right: 8%;
-}
-
-.home-template-content {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(360px, 0.92fr);
-  gap: clamp(2rem, 6vw, 5rem);
-  align-items: center;
-  width: min(100%, 1450px);
-  min-height: calc(100vh - 76px);
-  margin: 0 auto;
-  padding: clamp(3.5rem, 7vw, 6.5rem) clamp(24px, 6vw, 86px) 8rem;
-}
-
-.home-template-copy {
-  max-width: 760px;
-}
+  }
+/* Modal styles for preview */
+/* modal styles removed */
 
 .home-template-eyebrow {
   display: inline-flex;
@@ -1085,6 +1036,14 @@
   background: #ffffff;
 }
 
+/* Inline company profile panel shown under opportunity when expanded */
+.company-profile-inline {
+  padding: 0.8rem;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.9);
+  border: 1px solid rgba(16,24,40,0.04);
+}
+
 .news-card {
   overflow: hidden;
 }
@@ -1138,6 +1097,34 @@
   gap: 0.85rem;
   align-items: end;
   margin-bottom: 0.85rem;
+}
+
+/* Opportunities page: keep filters fixed while cards scroll */
+.opportunities-page {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 76px);
+  overflow: hidden;
+  min-height: 0;
+  max-height: calc(100vh - 76px);
+}
+
+.opportunities-page .opportunities-filters {
+  position: sticky;
+  top: 0;
+  z-index: 6;
+  background: #ffffff;
+  padding-top: 0.25rem;
+}
+
+.opportunities-page .opportunity-toolbar,
+.opportunities-page .opportunity-result-count {
+  background: #ffffff;
+}
+
+.opportunities-page .opportunity-result-count {
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .company-search-row {
@@ -1224,28 +1211,47 @@
 
 .opportunities-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* same columns as graduate grid: 4 columns on desktop */
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1rem;
+}
+
+.opportunities-page .opportunities-grid {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+  align-content: start;
+}
+
+.opportunity-item {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.opportunity-company-strip {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0 0.25rem;
+}
+
+.opportunity-company-name {
+  color: #101828;
+  font-weight: 900;
+  font-size: 0.92rem;
+}
+
+.opportunity-company-address {
+  color: #667085;
+  font-size: 0.8rem;
+  line-height: 1.25;
 }
 
 .opportunity-card {
   display: grid;
   gap: 0.85rem;
   padding: 1rem;
-}
-
-.opportunity-card-header {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  align-items: center;
-}
-
-.opportunity-card-header span {
-  color: #b42318;
-  font-size: 0.78rem;
-  font-weight: 900;
-  text-transform: uppercase;
 }
 
 .opportunity-card-header strong {
@@ -1611,37 +1617,7 @@
   pointer-events: none;
 }
 
-.graduate-ribbon {
-  position: absolute;
-  top: -1px;
-  left: 1.35rem;
-  z-index: 3;
-  display: grid;
-  width: 30px;
-  height: 56px;
-  place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.42);
-  border-top: 0;
-  background: linear-gradient(180deg, #101828, #475467);
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 82%, 0 100%);
-  color: #ffffff;
-  font-size: 0.72rem;
-  font-weight: 900;
-}
-
-.graduate-score {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  z-index: 3;
-  border-radius: 999px;
-  background: rgba(16, 24, 40, 0.22);
-  color: #ffffff;
-  padding: 0.28rem 0.55rem;
-  font-size: 0.78rem;
-  font-weight: 900;
-  backdrop-filter: blur(10px);
-}
+/* ribbon and score removed per design */
 
 .graduate-photo-wrap {
   position: absolute;
@@ -1654,14 +1630,15 @@
 
 .graduate-photo {
   display: block;
-  width: min(78%, 230px);
-  height: 245px;
-  border-radius: 12px;
+  /* make the photo circular */
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
   object-fit: cover;
-  object-position: center top;
+  object-position: center center;
   background: transparent;
-  /* soften the drop shadow so it doesn't create a heavy "smoke" band */
-  filter: drop-shadow(0 8px 12px rgba(16, 24, 40, 0.08));
+  /* subtle drop shadow for separation */
+  filter: drop-shadow(0 6px 10px rgba(16, 24, 40, 0.08));
 }
 
 .graduate-photo-fallback {
@@ -1685,6 +1662,8 @@
   color: #ffffff;
   font-weight: 900;
 }
+
+/* avatar-img and card-header-row removed (no company avatar shown on cards) */
 
 .graduate-card-body {
   position: relative;
@@ -1716,21 +1695,41 @@
 
 .graduate-card h3 {
   margin: 0;
-  color: #ffffff;
+  color: #000000; /* black title */
   font-size: 1.35rem;
   line-height: 1.05;
+  font-weight: 900;
 }
 
 .graduate-role,
 .graduate-university {
   display: -webkit-box;
   overflow: hidden;
-  color: #101828;
+  color: #000000;
   font-size: 0.8rem;
   line-height: 1.25;
   line-clamp: 2;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  font-weight: 700;
+}
+
+/* inline company logo next to company name */
+.company-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.company-logo-inline {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  object-fit: cover;
+  display: inline-block;
+}
+.company-name-inline {
+  color: inherit;
+  font-weight: 800;
 }
 
 .graduate-university {
@@ -1758,7 +1757,7 @@
 }
 
 .graduate-card-footer dt {
-  color: #101828;
+  color: #000000;
   font-size: 0.68rem;
   font-weight: 900;
 }
@@ -1767,7 +1766,13 @@
   margin: 0;
   color: #000000;
   font-size: 0.85rem;
-  font-weight: 950;
+  font-weight: 900;
+}
+
+/* ensure other paragraph/text in card body is black and bold */
+.graduate-card .graduate-card-body p {
+  color: #000000;
+  font-weight: 700;
 }
 
 .graduate-meta {
@@ -2605,8 +2610,8 @@
 }
 
 .student-profile-page-shell .student-profile-hero-company .mode-button.active {
-  background: #101828;
-  border-color: #101828;
+  background: #0b5fff;
+  border-color: #0b5fff;
   color: #ffffff;
 }
 
@@ -2617,6 +2622,12 @@
 .student-profile-page-shell .student-profile-hero-company .conference-panel p,
 .student-profile-page-shell .student-profile-hero-company .conference-panel label {
   color: #101828;
+}
+
+/* Force dark text for all inline elements inside conference panel to ensure readability */
+.student-profile-page-shell .student-profile-hero-company .conference-panel,
+.student-profile-page-shell .student-profile-hero-company .conference-panel * {
+  color: #101828 !important;
 }
 
 .student-profile-page-shell .student-profile-hero-company .interview-info {
@@ -2737,6 +2748,42 @@
   gap: 0.75rem;
   margin-top: 1rem;
 }
+.company-profile-logo {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+.company-profile h2 {
+  margin-top: 0;
+  margin-bottom: 0.25rem;
+}
+.company-profile-meta {
+  color: #475467;
+  margin-bottom: 1rem;
+}
+.company-job {
+  padding: 1rem;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid rgba(16,24,40,0.04);
+}
+.company-job-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+.company-job-meta {
+  display: flex;
+  gap: 0.6rem;
+  color: #475467;
+  font-weight: 700;
+}
+.job-deadline {
+  color: #b42318;
+}
 
 .profile-action-buttons {
   display: flex;
@@ -2797,8 +2844,8 @@
 }
 
 .mode-button.active {
-  border-color: #b42318;
-  background: #b42318;
+  border-color: #0b5fff;
+  background: #0b5fff;
   color: #ffffff;
 }
 
@@ -2885,12 +2932,8 @@
 }
 
 .talents-section::before {
-  position: absolute;
-  inset: 0;
-  content: '';
-  /* light overlay so black text remains readable */
-  background: linear-gradient(180deg, rgba(255,255,255,0.48), rgba(255,255,255,0.48));
-  z-index: 0;
+  /* remove white overlay so section inherits page background */
+  display: none;
 }
 
 .talents-section > * {
@@ -2911,12 +2954,115 @@
   color: #101828;
 }
 
+/* ensure talents section container is transparent */
+.talents-section {
+  background: transparent;
+}
+
+/* remove the default section top border for the talents page so no separating line appears */
+.talents-section {
+  border-top: none;
+}
+
 /* Profile CV block */
 .profile-cv {
   display: grid;
   gap: 0.6rem;
   margin-top: 0.8rem;
 }
+
+/* Quick links shown on graduate cards (portfolio / LinkedIn / project) */
+.graduate-quick-links {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+}
+.graduate-quick-links .quick-link {
+  padding: 0.35rem 0.6rem;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  text-decoration: none;
+  display: inline-block;
+}
+.graduate-quick-links .quick-link.secondary-action {
+  background: #ffffff;
+  border: 1px solid rgba(16,24,40,0.08);
+  color: #0b5fff;
+}
+
+/* Cards layout: align main content and quick-links on X axis */
+.graduate-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.75rem;
+  align-items: stretch;
+}
+.graduate-card-link {
+  display: flex;
+  gap: 1rem;
+  flex: 1 1 auto;
+  text-decoration: none;
+  color: inherit;
+}
+.graduate-card-body {
+  flex: 1 1 auto;
+}
+.graduate-quick-links {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-top: 0.4rem;
+}
+.graduate-quick-links .quick-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+.graduate-quick-links .quick-link:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(16,24,40,0.06);
+}
+.icon {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Portfolio badge */
+
+
+/* quick-links groups */
+.quick-links-left {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.quick-links-right {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.profile-link-button {
+  padding: 0.45rem 0.9rem;
+  background: #ffffff; /* white background to match quick-links */
+  color: #101828; /* dark text */
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 800;
+  border: 1px solid rgba(16,24,40,0.08);
+}
+.profile-link-button:hover {
+  filter: brightness(0.98);
+  box-shadow: 0 6px 18px rgba(16,24,40,0.06);
+}
+
+/* Modal styles for preview */
+
 
 .cv-row {
   display: flex;
@@ -3034,8 +3180,8 @@
 }
 
 .conference-panel .mode-button.active {
-  background: #101828;
-  border-color: #101828;
+  background: #0b5fff;
+  border-color: #0b5fff;
   color: #ffffff;
 }
 

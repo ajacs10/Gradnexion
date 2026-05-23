@@ -245,6 +245,37 @@ function StudentProfilePage({ graduates, onStudentMovedToInternship, session }) 
                     </ul>
                   </div>
                 )}
+                {student.productionProjects && student.productionProjects.length > 0 && (
+                  <div className="company-info-row">
+                    <strong>Projetos em produção:</strong>
+                    <ul>
+                      {student.productionProjects.map((proj, i) => (
+                        <li key={i} className="production-project-row">
+                          {typeof proj === 'string' ? (
+                            <span>{proj}</span>
+                          ) : (
+                            <div className="production-project">
+                              <div className="production-project-name">{proj.name}</div>
+                              {proj.description && (
+                                <div className="production-project-desc">{proj.description}</div>
+                              )}
+                              {proj.url && (
+                                <a
+                                  href={proj.url}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="secondary-action"
+                                >
+                                  Abrir projeto
+                                </a>
+                              )}
+                            </div>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             )}
           </div>

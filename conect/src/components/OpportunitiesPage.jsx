@@ -1,12 +1,14 @@
 // src/components/OpportunitiesPage.jsx
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import journalContent from '../data/journalContent';
 import { t } from '../i18n';
+import { Link } from 'react-router-dom';
 import { getDistanceInKm } from '../utils/location';
 import './HomePage.css';
 
-function OpportunitiesPage({ graduates, opportunities, session, companySearch, onApplyOpportunity }) {
+function OpportunitiesPage({ graduates, opportunities, session, companySearch, onApplyOpportunity, onWithdrawOpportunity }) {
   const studentCourse = session?.profile?.course;
+  const [openCompanyId, setOpenCompanyId] = useState(null);
   const [selectedCourse, setSelectedCourse] = useState(studentCourse || t.common.all);
   const [opportunitySearch, setOpportunitySearch] = useState('');
   const [selectedProvince, setSelectedProvince] = useState(t.common.all);
@@ -39,17 +41,6 @@ function OpportunitiesPage({ graduates, opportunities, session, companySearch, o
     'Cuanza Norte',
     'Cuanza Sul',
   ];
-
-  const countMatches = (area, requirements) => {
-    return graduates.filter((graduate) => {
-      const sameArea = graduate.course === area;
-      const hasSkill = graduate.skills.some((skill) =>
-        requirements.some((requirement) => skill.toLowerCase().includes(requirement.toLowerCase())),
-      );
-
-      return sameArea || hasSkill;
-    }).length;
-  };
 
   const filteredOpportunities = useMemo(() => {
     const normalizedSearch = opportunitySearch.trim().toLowerCase();
@@ -150,16 +141,37 @@ function OpportunitiesPage({ graduates, opportunities, session, companySearch, o
     }
   };
 
+  const handleWithdraw = async (opportunityId) => {
+    setApplyingId(opportunityId);
+    setApplicationStatus('');
+    try {
+      await onWithdrawOpportunity?.(opportunityId);
+      setApplicationStatus('Inscrição removida.');
+    } catch (error) {
+      setApplicationStatus(error.message || 'Não foi possível remover a inscrição.');
+    } finally {
+      setApplyingId(null);
+    }
+  };
+
+  useEffect(() => {
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
+    };
+  }, []);
+
   return (
     <main className="homepage-main page-shell">
-      <section className="section-band">
-        <div className="section-heading">
-          <p className="eyebrow">{t.home.companiesEyebrow}</p>
-          <h2>{t.home.companiesTitle}</h2>
-        </div>
+      <section className="section-band opportunities-page">
 
-        {/* Company search appears only in the logged student header on this page. */}
-
+        <div className="opportunities-filters">
         <div className="opportunity-toolbar">
           <label>
             <span>Pesquisar vaga</span>
@@ -213,14 +225,19 @@ function OpportunitiesPage({ graduates, opportunities, session, companySearch, o
           {locationStatus && <span>{locationStatus}</span>}
           {applicationStatus && <span>{applicationStatus}</span>}
         </p>
+        </div>
 
         <div className="opportunities-grid">
           {filteredOpportunities.map((opportunity) => (
-            <article className="opportunity-card" key={opportunity.id}>
-              <div className="opportunity-card-header">
-                <span>{opportunity.company}</span>
-                <strong>{countMatches(opportunity.area, opportunity.requirements)} matches</strong>
+            <div className="opportunity-item" key={opportunity.id}>
+              <div className="opportunity-company-strip">
+                <span className="opportunity-company-name">{opportunity.company}</span>
+                {opportunity.companyAddress && (
+                  <span className="opportunity-company-address">{opportunity.companyAddress}</span>
+                )}
               </div>
+
+              <article className="opportunity-card graduate-card">
               <h3>{opportunity.title}</h3>
               <p>{opportunity.description}</p>
               <dl>
@@ -229,16 +246,6 @@ function OpportunitiesPage({ graduates, opportunities, session, companySearch, o
                   <dd>{opportunity.area}</dd>
                 </div>
                 <div>
-                  <dt>{t.home.opportunityLocation}</dt>
-                  <dd>{opportunity.location}</dd>
-                </div>
-                {opportunity.companyAddress && (
-                  <div>
-                    <dt>Empresa</dt>
-                    <dd>{opportunity.companyAddress}</dd>
-                  </div>
-                )}
-                <div>
                   <dt>{t.home.opportunityMode}</dt>
                   <dd>{opportunity.mode}</dd>
                 </div>
@@ -246,10 +253,7 @@ function OpportunitiesPage({ graduates, opportunities, session, companySearch, o
                   <dt>{t.home.opportunityDuration}</dt>
                   <dd>{opportunity.duration}</dd>
                 </div>
-                <div>
-                  <dt>{t.home.opportunityDeadline}</dt>
-                  <dd>{opportunity.deadline}</dd>
-                </div>
+                {/* deadline moved to company profile */}
                 {opportunity.distance !== null && (
                   <div>
                     <dt>{t.home.radius}</dt>
@@ -273,17 +277,26 @@ function OpportunitiesPage({ graduates, opportunities, session, companySearch, o
                 <button
                   type="button"
                   className={opportunity.isApplied ? 'opportunity-apply-button is-applied' : 'opportunity-apply-button'}
-                  disabled={opportunity.isApplied || applyingId === opportunity.id}
-                  onClick={() => handleApply(opportunity.id)}
+                  disabled={applyingId === opportunity.id}
+                  onClick={() => (opportunity.isApplied ? handleWithdraw(opportunity.id) : handleApply(opportunity.id))}
                 >
                   {opportunity.isApplied
-                    ? 'Inscrito'
+                    ? 'Desinscrever-se'
                     : applyingId === opportunity.id
                       ? 'A enviar...'
                       : 'Inscrever-se'}
                 </button>
               </div>
-            </article>
+              <div style={{ marginTop: '0.6rem' }}>
+                <Link
+                  to={`/empresas/${opportunity.companyId || encodeURIComponent(opportunity.company)}`}
+                  className="secondary-action"
+                >
+                  Ver vaga
+                </Link>
+              </div>
+              </article>
+            </div>
           ))}
         </div>
       </section>

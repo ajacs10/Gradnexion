@@ -11,10 +11,11 @@ import ProfilePage from './components/ProfilePage';
 import LoginPage from './components/LoginPage';
 import StudentProfilePage from './components/StudentProfilePage';
 import TalentsPage from './components/TalentsPage';
+import CompanyProfilePage from './components/CompanyProfilePage';
 import OpportunitiesPage from './components/OpportunitiesPage';
 import CompanyOpportunityPage from './components/CompanyOpportunityPage';
 import AdminPage from './components/AdminPage';
-import { apiGet, apiPatch, apiPost } from './services/api';
+import { apiGet, apiPatch, apiPost, apiDelete } from './services/api';
 import './App.css';
 
 const getHomePath = (role) => {
@@ -43,6 +44,7 @@ function AppContent({
   handleLogin,
   handleCreateOpportunity,
   handleApplyOpportunity,
+  handleWithdrawOpportunity,
   handleStudentMovedToInternship,
   handleUpdateProfile,
   handleLogout,
@@ -147,10 +149,19 @@ function AppContent({
                 session={session}
                 companySearch={companySearch}
                 onApplyOpportunity={handleApplyOpportunity}
+                onWithdrawOpportunity={handleWithdrawOpportunity}
               />
             </ProtectedRoute>
           }
         />
+          <Route
+            path="/empresas/:id"
+            element={
+              <ProtectedRoute session={session} allowedRoles={['student']}>
+                <CompanyProfilePage opportunities={opportunities} />
+              </ProtectedRoute>
+            }
+          />
         <Route
           path="/empresas/vagas/nova"
           element={
@@ -304,6 +315,14 @@ function App() {
     await refreshNetwork(session);
   };
 
+  const handleWithdrawOpportunity = async (opportunityId) => {
+    if (session.role !== 'student' || !session.profile?.id) return;
+    await apiDelete(`/api/opportunities/${opportunityId}/applications`, {
+      studentId: session.profile.id,
+    });
+    await refreshNetwork(session);
+  };
+
   const handleStudentMovedToInternship = () => {
     setSession((current) => {
       if (current.role !== 'company') return current;
@@ -328,6 +347,7 @@ function App() {
         handleLogin={handleLogin}
         handleCreateOpportunity={handleCreateOpportunity}
         handleApplyOpportunity={handleApplyOpportunity}
+        handleWithdrawOpportunity={handleWithdrawOpportunity}
         handleStudentMovedToInternship={handleStudentMovedToInternship}
         handleUpdateProfile={handleUpdateProfile}
         handleLogout={handleLogout}

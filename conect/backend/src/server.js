@@ -616,6 +616,31 @@ app.post('/api/opportunities/:id/applications', async (req, res, next) => {
   }
 });
 
+app.delete('/api/opportunities/:id/applications', async (req, res, next) => {
+  try {
+    const studentId = Number(req.body?.studentId ?? req.query.studentId);
+    const opportunityId = Number(req.params.id);
+    if (!studentId || !opportunityId) {
+      return res.status(400).json({ message: 'Estudante e vaga obrigatorios.' });
+    }
+
+    const result = await query(
+      `DELETE FROM applications
+       WHERE student_id = $1 AND opportunity_id = $2
+       RETURNING *`,
+      [studentId, opportunityId],
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: 'Candidatura nao encontrada.' });
+    }
+
+    return res.status(200).json({ message: 'Candidatura removida.' });
+  } catch (error) {
+    return next(error);
+  }
+});
+
 app.get('/api/students/:id/applications', async (req, res, next) => {
   try {
     const result = await query(
