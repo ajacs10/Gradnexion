@@ -1,7 +1,7 @@
 // src/components/ProfilePage.jsx
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { apiGet, apiPatch } from '../services/api';
+import { apiGet, apiPatch, apiPost } from '../services/api';
 import './HomePage.css';
 
 const getInitials = (name = '') =>
@@ -67,6 +67,21 @@ const LinkedInIcon = () => (
     <rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/>
   </svg>
 );
+
+const applicationStatusLabel = {
+  submitted: 'Aguardando análise',
+  reviewing: 'Em análise',
+  accepted: 'Aceite',
+  rejected: 'Rejeitada',
+};
+
+const interviewStatusLabel = {
+  requested: 'Solicitada',
+  scheduled: 'Entrevista marcada',
+  internship_started: 'Estágio iniciado',
+  rejected: 'Rejeitada',
+  completed: 'Concluída',
+};
 
 /* ── generic single-value editable field ── */
 function EditableField({ label, value, name, type = 'text', onSave, placeholder = '' }) {
@@ -267,6 +282,13 @@ function ProfilePage({ session, onProfileUpdated }) {
   const [isSaving, setIsSaving]         = useState(false);
   const [interns, setInterns]           = useState([]);
   const [internStatus, setInternStatus] = useState('');
+  const [applications, setApplications] = useState([]);
+  const [applicationsStatus, setApplicationsStatus] = useState('');
+  const [selectedStudents, setSelectedStudents] = useState([]);
+  const [bulkMode, setBulkMode] = useState('Via plataforma');
+  const [bulkDate, setBulkDate] = useState('');
+  const [bulkMessage, setBulkMessage] = useState('');
+  const [bulkStatus, setBulkStatus] = useState('');
   const photoInputRef = useRef(null);
 
   useEffect(() => {
@@ -276,12 +298,35 @@ function ProfilePage({ session, onProfileUpdated }) {
   }, [profile]);
 
   useEffect(() => {
+    setApplicationsStatus('');
+    const endpoint = isCompany
+      ? `/api/companies/${profile.id}/applications`
+      : `/api/students/${profile.id}/applications`;
+
+    apiGet(endpoint)
+      .then(setApplications)
+      .catch((error) => setApplicationsStatus(error.message));
+  }, [isCompany, profile.id]);
+
+  useEffect(() => {
     if (!isCompany) return;
 
     apiGet(`/api/companies/${profile.id}/interns`)
       .then(setInterns)
       .catch((error) => setInternStatus(error.message));
   }, [isCompany, profile.id]);
+
+  const groupedApplications = applications.reduce((groups, application) => {
+    const key = application.opportunity.id;
+    if (!groups[key]) {
+      groups[key] = {
+        opportunity: application.opportunity,
+        items: [],
+      };
+    }
+    groups[key].items.push(application);
+    return groups;
+  }, {});
 
   const saveProfile = async (formData) => {
     setIsSaving(true);
@@ -347,6 +392,42 @@ function ProfilePage({ session, onProfileUpdated }) {
     const fd = buildFormData(form);
     fd.append(isCompany ? 'logo' : 'photo', file);
     await saveProfile(fd);
+  };
+
+  const toggleStudentSelection = (studentId) => {
+    setSelectedStudents((current) =>
+      current.includes(studentId)
+        ? current.filter((id) => id !== studentId)
+        : [...current, studentId],
+    );
+  };
+
+  const refreshApplications = async () => {
+    const endpoint = isCompany
+      ? `/api/companies/${profile.id}/applications`
+      : `/api/students/${profile.id}/applications`;
+    const payload = await apiGet(endpoint);
+    setApplications(payload);
+  };
+
+  const handleBulkSchedule = async () => {
+    setBulkStatus('');
+    try {
+      await apiPost('/api/interviews/bulk', {
+        studentIds: selectedStudents,
+        companyId: profile.id,
+        mode: bulkMode,
+        scheduledAt: bulkDate || null,
+        notes: bulkMessage,
+      });
+      setBulkStatus('Reunião marcada para os candidatos selecionados.');
+      setSelectedStudents([]);
+      setBulkDate('');
+      setBulkMessage('');
+      await refreshApplications();
+    } catch (error) {
+      setBulkStatus(error.message);
+    }
   };
 
   return (
@@ -472,6 +553,92 @@ function ProfilePage({ session, onProfileUpdated }) {
                   <p className="empty-state">Nenhum estagiário associado a esta empresa.</p>
                 )}
               </article>
+
+              <article className="profile-section-card company-applications-card">
+                <div className="profile-section-title">
+                  <h2>Candidaturas recebidas</h2>
+                  <span>{applications.length} inscrito{applications.length === 1 ? '' : 's'}</span>
+                </div>
+                {applicationsStatus && <p className="profile-edit-status status-error">{applicationsStatus}</p>}
+                {applications.length > 0 ? (
+                  <>
+                    <div className="company-application-tools">
+                      <label>
+                        <span>Tipo de reunião</span>
+                        <select value={bulkMode} onChange={(event) => setBulkMode(event.target.value)}>
+                          <option>Via plataforma</option>
+                          <option>Presencial</option>
+                        </select>
+                      </label>
+                      <label>
+                        <span>Data</span>
+                        <input type="datetime-local" value={bulkDate} onChange={(event) => setBulkDate(event.target.value)} />
+                      </label>
+                      <label>
+                        <span>Mensagem</span>
+                        <input value={bulkMessage} onChange={(event) => setBulkMessage(event.target.value)} placeholder="Mensagem para os candidatos" />
+                      </label>
+                      <button type="button" className="primary-action" onClick={handleBulkSchedule} disabled={selectedStudents.length === 0}>
+                        Marcar reunião ({selectedStudents.length})
+                      </button>
+                    </div>
+                    {bulkStatus && <p className={`profile-edit-status ${bulkStatus.includes('marcada') ? 'status-ok' : 'status-error'}`}>{bulkStatus}</p>}
+                    <div className="company-application-list">
+                      {Object.values(groupedApplications).map(({ opportunity, items }) => (
+                        <section className="company-application-group" key={opportunity.id}>
+                          <header>
+                            <div>
+                              <strong>{opportunity.title}</strong>
+                              <span>{opportunity.area} · {opportunity.mode} · {opportunity.location}</span>
+                            </div>
+                            <b>{items.length} inscrito{items.length === 1 ? '' : 's'}</b>
+                          </header>
+                          <div className="company-applicant-grid">
+                            {items.map((application) => (
+                              <article className="company-applicant-card" key={application.id}>
+                                <label className="company-applicant-select">
+                                  <input
+                                    type="checkbox"
+                                    checked={selectedStudents.includes(application.student.id)}
+                                    onChange={() => toggleStudentSelection(application.student.id)}
+                                  />
+                                  Selecionar
+                                </label>
+                                <div className="company-applicant-main">
+                                  {application.student.photoUrl ? (
+                                    <img src={application.student.photoUrl} alt={application.student.name} />
+                                  ) : (
+                                    <span>{getInitials(application.student.name)}</span>
+                                  )}
+                                  <div>
+                                    <strong>{application.student.name}</strong>
+                                    <small>{application.student.role} · {application.student.course}</small>
+                                    <small>{application.student.university}</small>
+                                  </div>
+                                </div>
+                                <div className="company-applicant-meta">
+                                  <span>{applicationStatusLabel[application.status] ?? application.status}</span>
+                                  {application.interview && (
+                                    <span>{interviewStatusLabel[application.interview.status] ?? application.interview.status}</span>
+                                  )}
+                                </div>
+                                <div className="company-intern-actions">
+                                  <Link to={`/talentos/${application.student.id}`} className="secondary-action">Analisar perfil</Link>
+                                  {application.interview?.meetingUrl && (
+                                    <a href={application.interview.meetingUrl} target="_blank" rel="noreferrer" className="primary-action">Sala</a>
+                                  )}
+                                </div>
+                              </article>
+                            ))}
+                          </div>
+                        </section>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <p className="empty-state">Ainda não há estudantes inscritos nas vagas da empresa.</p>
+                )}
+              </article>
             </div>
           ) : (
             <>
@@ -560,6 +727,42 @@ function ProfilePage({ session, onProfileUpdated }) {
                 <div><dt>Curso</dt><dd>{profile.course}</dd></div>
                 <div><dt>Turma</dt><dd>{profile.year}</dd></div>
               </dl>
+            </article>
+          )}
+
+          {!isCompany && (
+            <article className="profile-section-card student-applications-card">
+              <div className="profile-section-title">
+                <h2>Minhas inscrições</h2>
+                <span>{applications.length} vaga{applications.length === 1 ? '' : 's'}</span>
+              </div>
+              {applicationsStatus && <p className="profile-edit-status status-error">{applicationsStatus}</p>}
+              {applications.length > 0 ? (
+                <div className="student-application-list">
+                  {applications.map((application) => (
+                    <article className="student-application-item" key={application.id}>
+                      <div>
+                        <strong>{application.opportunity.title}</strong>
+                        <span>{application.opportunity.company}</span>
+                        <small>{application.opportunity.area} · {application.opportunity.mode} · {application.opportunity.location}</small>
+                      </div>
+                      <div className="student-application-status">
+                        <span>{applicationStatusLabel[application.status] ?? application.status}</span>
+                        {application.interview ? (
+                          <strong>{interviewStatusLabel[application.interview.status] ?? application.interview.status}</strong>
+                        ) : (
+                          <strong>Aguardando decisão da empresa</strong>
+                        )}
+                        {application.interview?.meetingUrl && (
+                          <a href={application.interview.meetingUrl} target="_blank" rel="noreferrer">Abrir sala</a>
+                        )}
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              ) : (
+                <p className="empty-state">Ainda não te inscreveste em nenhuma vaga.</p>
+              )}
             </article>
           )}
 

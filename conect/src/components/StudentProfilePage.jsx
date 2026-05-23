@@ -66,8 +66,8 @@ function StudentProfilePage({ graduates, onStudentMovedToInternship, session }) 
         studentId: student.id,
         companyId: session.profile.id,
         mode,
-        scheduledDate: interviewDate || null,
-        message: interviewMessage || null,
+        scheduledAt: interviewDate || null,
+        notes: interviewMessage || null,
       });
 
       setInterview(createdInterview);
@@ -313,18 +313,18 @@ function StudentProfilePage({ graduates, onStudentMovedToInternship, session }) 
               </button>
             </div>
 
-            {interview && interview.scheduledDate && (
+            {interview && (interview.scheduled_at || interview.scheduledAt) && (
               <div className="interview-info">
                 <p>
                   <strong>Data:</strong>{' '}
                   {new Date(
-                    interview.scheduledDate
+                    interview.scheduled_at || interview.scheduledAt
                   ).toLocaleDateString('pt-AO')}
                 </p>
 
-                {interview.message && (
+                {(interview.notes || interview.message) && (
                   <p>
-                    <strong>Msg:</strong> {interview.message}
+                    <strong>Msg:</strong> {interview.notes || interview.message}
                   </p>
                 )}
               </div>

@@ -115,7 +115,7 @@ const mapCompany = (row) => ({
   internshipCount: Number(row.internship_count ?? 0),
 });
 
-const mapOpportunity = (row) => ({
+const mapOpportunity = (row, options = {}) => ({
   id: row.id,
   companyId: row.company_id,
   company: row.company_name,
@@ -134,6 +134,42 @@ const mapOpportunity = (row) => ({
   coordinates: row.latitude && row.longitude ? { lat: Number(row.latitude), lng: Number(row.longitude) } : null,
   linkedinUrl: row.company_linkedin_url,
   websiteUrl: row.company_website_url,
+  ...(options.includeApplicationsCount ? { applicationsCount: Number(row.applications_count ?? 0) } : {}),
+  isApplied: Boolean(row.is_applied),
+});
+
+const mapApplication = (row) => ({
+  id: row.application_id ?? row.id,
+  status: row.application_status ?? row.status,
+  createdAt: row.application_created_at ?? row.created_at,
+  opportunity: {
+    id: row.opportunity_id,
+    title: row.opportunity_title,
+    area: row.opportunity_area,
+    mode: row.opportunity_mode,
+    location: row.opportunity_location,
+    deadline: row.opportunity_deadline,
+    companyId: row.company_id,
+    company: row.company_name,
+  },
+  student: row.student_id ? {
+    id: row.student_id,
+    name: row.student_name,
+    course: row.student_course,
+    role: row.student_role,
+    email: row.student_email,
+    phone: row.student_phone,
+    university: row.student_university,
+    photoUrl: row.student_photo_url,
+    skills: row.student_skills ?? [],
+  } : null,
+  interview: row.interview_id ? {
+    id: row.interview_id,
+    mode: row.interview_mode,
+    status: row.interview_status,
+    meetingUrl: row.meeting_url,
+    scheduledAt: row.scheduled_at,
+  } : null,
 });
 
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
@@ -530,21 +566,129 @@ app.post('/api/companies', upload.single('logo'), async (req, res, next) => {
 app.get('/api/opportunities', async (req, res, next) => {
   try {
     const area = req.query.area ? String(req.query.area) : null;
+    const studentId = req.query.studentId ? Number(req.query.studentId) : null;
     const params = [];
     const filters = [];
     if (area) {
       params.push(area);
       filters.push(`o.area = $${params.length}`);
     }
+    params.push(studentId);
+    const studentIdParam = params.length;
     const result = await query(
-      `SELECT o.*, c.name AS company_name, c.linkedin_url AS company_linkedin_url, c.website_url AS company_website_url
+      `SELECT o.*, c.name AS company_name, c.linkedin_url AS company_linkedin_url, c.website_url AS company_website_url,
+        COUNT(a.id) AS applications_count,
+        BOOL_OR(a.student_id = $${studentIdParam}) AS is_applied
        FROM opportunities o
        JOIN companies c ON c.id = o.company_id
+       LEFT JOIN applications a ON a.opportunity_id = o.id
        ${filters.length ? `WHERE ${filters.join(' AND ')}` : ''}
+       GROUP BY o.id, c.name, c.linkedin_url, c.website_url
        ORDER BY o.created_at DESC`,
       params,
     );
-    res.json(result.rows.map(mapOpportunity));
+    res.json(result.rows.map((row) => mapOpportunity(row, { includeApplicationsCount: !studentId })));
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/opportunities/:id/applications', async (req, res, next) => {
+  try {
+    const studentId = Number(req.body.studentId);
+    const opportunityId = Number(req.params.id);
+    if (!studentId || !opportunityId) {
+      return res.status(400).json({ message: 'Estudante e vaga obrigatorios.' });
+    }
+
+    const result = await query(
+      `INSERT INTO applications (student_id, opportunity_id)
+       VALUES ($1, $2)
+       ON CONFLICT (student_id, opportunity_id)
+       DO UPDATE SET status = applications.status
+       RETURNING *`,
+      [studentId, opportunityId],
+    );
+
+    return res.status(201).json(result.rows[0]);
+  } catch (error) {
+    return next(error);
+  }
+});
+
+app.get('/api/students/:id/applications', async (req, res, next) => {
+  try {
+    const result = await query(
+      `SELECT
+        a.id AS application_id,
+        a.status AS application_status,
+        a.created_at AS application_created_at,
+        o.id AS opportunity_id,
+        o.title AS opportunity_title,
+        o.area AS opportunity_area,
+        o.mode AS opportunity_mode,
+        o.location AS opportunity_location,
+        o.deadline AS opportunity_deadline,
+        c.id AS company_id,
+        c.name AS company_name,
+        i.id AS interview_id,
+        i.mode AS interview_mode,
+        i.status AS interview_status,
+        i.meeting_url,
+        i.scheduled_at
+       FROM applications a
+       JOIN opportunities o ON o.id = a.opportunity_id
+       JOIN companies c ON c.id = o.company_id
+       LEFT JOIN interviews i ON i.student_id = a.student_id AND i.company_id = c.id
+       WHERE a.student_id = $1
+       ORDER BY a.created_at DESC`,
+      [req.params.id],
+    );
+    res.json(result.rows.map(mapApplication));
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/api/companies/:id/applications', async (req, res, next) => {
+  try {
+    const result = await query(
+      `SELECT
+        a.id AS application_id,
+        a.status AS application_status,
+        a.created_at AS application_created_at,
+        o.id AS opportunity_id,
+        o.title AS opportunity_title,
+        o.area AS opportunity_area,
+        o.mode AS opportunity_mode,
+        o.location AS opportunity_location,
+        o.deadline AS opportunity_deadline,
+        c.id AS company_id,
+        c.name AS company_name,
+        s.id AS student_id,
+        s.full_name AS student_name,
+        s.course AS student_course,
+        s.current_area AS student_role,
+        s.email AS student_email,
+        s.phone AS student_phone,
+        s.university AS student_university,
+        s.photo_url AS student_photo_url,
+        s.skills AS student_skills,
+        i.id AS interview_id,
+        i.mode AS interview_mode,
+        i.status AS interview_status,
+        i.meeting_url,
+        i.scheduled_at
+       FROM applications a
+       JOIN opportunities o ON o.id = a.opportunity_id
+       JOIN companies c ON c.id = o.company_id
+       JOIN students s ON s.id = a.student_id
+       LEFT JOIN interviews i ON i.student_id = s.id AND i.company_id = c.id
+       WHERE o.company_id = $1
+       ORDER BY o.created_at DESC, a.created_at DESC`,
+      [req.params.id],
+    );
+    res.json(result.rows.map(mapApplication));
   } catch (error) {
     next(error);
   }
@@ -599,9 +743,72 @@ app.post('/api/interviews', async (req, res, next) => {
         req.body.notes || '',
       ],
     );
+    await query(
+      `UPDATE applications a
+       SET status = 'reviewing'
+       FROM opportunities o
+       WHERE a.opportunity_id = o.id
+         AND a.student_id = $1
+         AND o.company_id = $2`,
+      [req.body.studentId, req.body.companyId],
+    );
     res.status(201).json(result.rows[0]);
   } catch (error) {
     next(error);
+  }
+});
+
+app.post('/api/interviews/bulk', async (req, res, next) => {
+  const client = await pool.connect();
+  try {
+    const studentIds = Array.isArray(req.body.studentIds)
+      ? req.body.studentIds.map(Number).filter(Boolean)
+      : [];
+    const companyId = Number(req.body.companyId);
+    const mode = req.body.mode === 'Via plataforma' ? 'Via plataforma' : 'Presencial';
+
+    if (!studentIds.length || !companyId) {
+      return res.status(400).json({ message: 'Seleciona pelo menos um estudante.' });
+    }
+
+    await client.query('BEGIN');
+    const created = [];
+
+    for (const studentId of studentIds) {
+      const meetingUrl = mode === 'Via plataforma' ? meetUrl(companyId, studentId) : '';
+      const result = await client.query(
+        `INSERT INTO interviews (student_id, company_id, mode, status, meeting_url, scheduled_at, notes)
+         VALUES ($1, $2, $3, 'scheduled', $4, $5, $6)
+         RETURNING *`,
+        [
+          studentId,
+          companyId,
+          mode,
+          meetingUrl,
+          req.body.scheduledAt || null,
+          req.body.notes || '',
+        ],
+      );
+      created.push(result.rows[0]);
+    }
+
+    await client.query(
+      `UPDATE applications a
+       SET status = 'reviewing'
+       FROM opportunities o
+       WHERE a.opportunity_id = o.id
+         AND o.company_id = $1
+         AND a.student_id = ANY($2::int[])`,
+      [companyId, studentIds],
+    );
+
+    await client.query('COMMIT');
+    res.status(201).json(created);
+  } catch (error) {
+    await client.query('ROLLBACK');
+    next(error);
+  } finally {
+    client.release();
   }
 });
 

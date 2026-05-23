@@ -51,10 +51,8 @@ function CompanyOpportunityPage({ onCreateOpportunity }) {
       companyAddress: opportunityForm.companyAddress.trim(),
       linkedinUrl: opportunityForm.linkedinUrl.trim(),
       websiteUrl: opportunityForm.websiteUrl.trim(),
-      coordinates: {
-        lat: Number(opportunityForm.latitude),
-        lng: Number(opportunityForm.longitude),
-      },
+      latitude: Number(opportunityForm.latitude),
+      longitude: Number(opportunityForm.longitude),
       mode: opportunityForm.mode,
       visibility: opportunityForm.visibility,
       duration: opportunityForm.duration.trim(),

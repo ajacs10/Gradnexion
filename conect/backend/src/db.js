@@ -93,6 +93,16 @@ export async function migrate() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+    CREATE TABLE IF NOT EXISTS applications (
+      id SERIAL PRIMARY KEY,
+      student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+      opportunity_id INTEGER NOT NULL REFERENCES opportunities(id) ON DELETE CASCADE,
+      status TEXT NOT NULL DEFAULT 'submitted'
+        CHECK (status IN ('submitted', 'reviewing', 'accepted', 'rejected')),
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      UNIQUE (student_id, opportunity_id)
+    );
+
     CREATE TABLE IF NOT EXISTS interviews (
       id SERIAL PRIMARY KEY,
       student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
@@ -200,6 +210,43 @@ export async function seed() {
     );
   };
 
+  const seedOpportunity = async () => {
+    const company = await query('SELECT id FROM companies WHERE name = $1', ['SheCodeAjacs']);
+    if (company.rowCount === 0) return;
+
+    const existing = await query(
+      'SELECT id FROM opportunities WHERE company_id = $1 AND title = $2',
+      [company.rows[0].id, 'Estágio em Desenvolvimento Frontend'],
+    );
+    if (existing.rowCount > 0) return;
+
+    await query(
+      `INSERT INTO opportunities (
+        company_id, title, area, province, city, location, company_address, mode,
+        visibility, duration, deadline, requirements, description, latitude, longitude
+      ) VALUES (
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15
+      )`,
+      [
+        company.rows[0].id,
+        'Estágio em Desenvolvimento Frontend',
+        'Informática e Sistemas de Informação',
+        'Luanda',
+        'Talatona',
+        'Talatona, Luanda',
+        'Talatona, próximo ao centro empresarial',
+        'Híbrido',
+        'Mostrar no perfil dos estudantes compatíveis',
+        '3 meses',
+        '30 Jun 2026',
+        ['React', 'UI', 'Comunicação'],
+        'Apoio na criação de interfaces web, integração com APIs e melhoria da experiência dos estudantes na plataforma.',
+        -8.8390,
+        13.2894,
+      ],
+    );
+  };
+
   const seedAdmin = async () => {
     const existing = await query('SELECT id FROM users WHERE username = $1', ['admin']);
     if (existing.rowCount > 0) return;
@@ -212,7 +259,7 @@ export async function seed() {
     );
   };
 
-  const TalentStudents = async () => {
+  const seedTalentStudents = async () => {
     const talents = [
       {
         username: 'edmilson-uan',
@@ -406,7 +453,8 @@ export async function seed() {
   };
 
   await seedStudent();
-  await seedTalentStudents();
   await seedCompany();
+  await seedTalentStudents();
+  await seedOpportunity();
   await seedAdmin();
 }

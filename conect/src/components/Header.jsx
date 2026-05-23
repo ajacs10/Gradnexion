@@ -30,7 +30,7 @@ const getInitials = (name = '') =>
     .slice(0, 2)
     .toUpperCase();
 
-function Header({ session, onLogout }) {
+function Header({ session, onLogout, companySearch, onCompanySearchChange }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -50,6 +50,7 @@ function Header({ session, onLogout }) {
         ? companyLinks
         : studentLinks;
   const profileName = session?.profile?.name || session?.profile?.company;
+  const showCompanySearch = session?.isRegistered && session.role === 'student' && location.pathname === '/vagas';
 
   const handleLogout = () => {
     setMenuOpen(false);
@@ -86,12 +87,31 @@ function Header({ session, onLogout }) {
     <header className="site-header">
       <div className="header-container">
         <Link to={homePath} className="brand" onClick={() => setMenuOpen(false)}>
-          <span className="brand-mark" aria-hidden="true">FC</span>
+          <span className="brand-mark" aria-hidden="true">
+            <img src="/src/assets/imagem/favicon.svg" alt="Finalista Connect" />
+          </span>
           <span>
             <strong>{title}</strong>
             <small>Rede de estágios</small>
           </span>
         </Link>
+
+        {showCompanySearch && (
+          <form
+            className="header-search"
+            onSubmit={(e) => {
+              e.preventDefault();
+            }}
+          >
+            <input
+              aria-label="Pesquisar empresa"
+              type="search"
+              value={companySearch || ''}
+              onChange={(e) => onCompanySearchChange?.(e.target.value)}
+              placeholder="Pesquisar empresa..."
+            />
+          </form>
+        )}
 
         <button
           className="menu-toggle"

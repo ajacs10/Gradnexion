@@ -2,21 +2,43 @@
 import React, { useMemo, useState } from 'react';
 import journalContent from '../data/journalContent';
 import { t } from '../i18n';
-import { getDistanceInKm, radiusOptions } from '../utils/location';
+import { getDistanceInKm } from '../utils/location';
 import './HomePage.css';
 
-function OpportunitiesPage({ graduates, opportunities, session }) {
+function OpportunitiesPage({ graduates, opportunities, session, companySearch, onApplyOpportunity }) {
   const studentCourse = session?.profile?.course;
   const [selectedCourse, setSelectedCourse] = useState(studentCourse || t.common.all);
   const [opportunitySearch, setOpportunitySearch] = useState('');
-  const [companySearch, setCompanySearch] = useState('');
   const [selectedProvince, setSelectedProvince] = useState(t.common.all);
   const [selectedMode, setSelectedMode] = useState(t.common.all);
-  const [selectedRadius, setSelectedRadius] = useState(t.home.radiusAll);
   const [studentLocation, setStudentLocation] = useState(null);
   const [locationStatus, setLocationStatus] = useState('');
+  const [applyingId, setApplyingId] = useState(null);
+  const [applicationStatus, setApplicationStatus] = useState('');
   const courses = journalContent.courseAreas.map((course) => course.name);
-  const provinces = [...new Set(opportunities.map((opportunity) => opportunity.province))].sort();
+  const provinces = [
+    'Bengo',
+    'Benguela',
+    'Bié',
+    'Cabinda',
+    'Cuando Cubango',
+    'Cubango',
+    'Cunene',
+    'Huambo',
+    'Huíla',
+    'Icolo e Bengo',
+    'Luanda',
+    'Lunda Norte',
+    'Lunda Sul',
+    'Malanje',
+    'Moxico',
+    'Moxico Leste',
+    'Namibe',
+    'Uíge',
+    'Zaire',
+    'Cuanza Norte',
+    'Cuanza Sul',
+  ];
 
   const countMatches = (area, requirements) => {
     return graduates.filter((graduate) => {
@@ -50,10 +72,7 @@ function OpportunitiesPage({ graduates, opportunities, session }) {
         const matchesCompany =
           !normalizedCompanySearch ||
           opportunity.company.toLowerCase().includes(normalizedCompanySearch);
-        const matchesRadius =
-          selectedRadius === t.home.radiusAll ||
-          !studentLocation ||
-          (opportunity.distance !== null && opportunity.distance <= Number(selectedRadius));
+        const matchesRadius = true;
         const searchable = [
           opportunity.company,
           opportunity.title,
@@ -94,7 +113,6 @@ function OpportunitiesPage({ graduates, opportunities, session }) {
     selectedCourse,
     selectedMode,
     selectedProvince,
-    selectedRadius,
     studentLocation,
     studentCourse,
   ]);
@@ -119,33 +137,28 @@ function OpportunitiesPage({ graduates, opportunities, session }) {
     );
   };
 
+  const handleApply = async (opportunityId) => {
+    setApplyingId(opportunityId);
+    setApplicationStatus('');
+    try {
+      await onApplyOpportunity?.(opportunityId);
+      setApplicationStatus('Inscrição enviada.');
+    } catch (error) {
+      setApplicationStatus(error.message || 'Não foi possível enviar a inscrição.');
+    } finally {
+      setApplyingId(null);
+    }
+  };
+
   return (
     <main className="homepage-main page-shell">
       <section className="section-band">
         <div className="section-heading">
           <p className="eyebrow">{t.home.companiesEyebrow}</p>
           <h2>{t.home.companiesTitle}</h2>
-          <p>{t.home.companiesDescription}</p>
         </div>
 
-        <div className="company-search-row">
-          <div className="linkedin-note">
-            <strong>Empresas verificáveis</strong>
-            <p>
-              As vagas podem incluir endereço, LinkedIn e site oficial para facilitar a avaliação
-              da oportunidade antes da candidatura.
-            </p>
-          </div>
-          <label>
-            <span>Pesquisar empresa</span>
-            <input
-              type="search"
-              value={companySearch}
-              onChange={(event) => setCompanySearch(event.target.value)}
-              placeholder="Nome da empresa..."
-            />
-          </label>
-        </div>
+        {/* Company search appears only in the logged student header on this page. */}
 
         <div className="opportunity-toolbar">
           <label>
@@ -160,16 +173,12 @@ function OpportunitiesPage({ graduates, opportunities, session }) {
           <label>
             <span>{t.home.course}</span>
             <select value={selectedCourse} onChange={(event) => setSelectedCourse(event.target.value)}>
-              {studentCourse ? (
-                <option>{studentCourse}</option>
-              ) : (
-                <>
-                  <option>{t.common.all}</option>
-                  {courses.map((course) => (
-                    <option key={course}>{course}</option>
-                  ))}
-                </>
-              )}
+              <option value={t.common.all}>{t.common.all}</option>
+              {courses.map((course) => (
+                <option key={course} value={course}>
+                  {course}
+                </option>
+              ))}
             </select>
           </label>
           <label>
@@ -193,20 +202,7 @@ function OpportunitiesPage({ graduates, opportunities, session }) {
               <option>Remoto</option>
             </select>
           </label>
-          <label>
-            <span>{t.home.radius}</span>
-            <select
-              value={selectedRadius}
-              onChange={(event) => setSelectedRadius(event.target.value)}
-            >
-              <option>{t.home.radiusAll}</option>
-              {radiusOptions.map((radius) => (
-                <option key={radius} value={radius}>
-                  {radius} km
-                </option>
-              ))}
-            </select>
-          </label>
+          {/* radius filter removed */}
           <button type="button" onClick={handleUseLocation}>
             {t.home.useMyLocation}
           </button>
@@ -215,6 +211,7 @@ function OpportunitiesPage({ graduates, opportunities, session }) {
         <p className="opportunity-result-count">
           {filteredOpportunities.length} {t.home.vacanciesFound}
           {locationStatus && <span>{locationStatus}</span>}
+          {applicationStatus && <span>{applicationStatus}</span>}
         </p>
 
         <div className="opportunities-grid">
@@ -270,6 +267,21 @@ function OpportunitiesPage({ graduates, opportunities, session }) {
                 {opportunity.websiteUrl && (
                   <a href={opportunity.websiteUrl} target="_blank" rel="noreferrer">Site</a>
                 )}
+              </div>
+              <div className="opportunity-apply-row">
+                <span>{opportunity.isApplied ? 'A tua inscrição já foi enviada.' : 'Candidatura direta pela plataforma.'}</span>
+                <button
+                  type="button"
+                  className={opportunity.isApplied ? 'opportunity-apply-button is-applied' : 'opportunity-apply-button'}
+                  disabled={opportunity.isApplied || applyingId === opportunity.id}
+                  onClick={() => handleApply(opportunity.id)}
+                >
+                  {opportunity.isApplied
+                    ? 'Inscrito'
+                    : applyingId === opportunity.id
+                      ? 'A enviar...'
+                      : 'Inscrever-se'}
+                </button>
               </div>
             </article>
           ))}

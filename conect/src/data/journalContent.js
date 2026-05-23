@@ -54,7 +54,7 @@ const courseAreas = [
 
 const journalContent = {
   header: {
-    title: 'Finalista Connect',
+    title: 'GradNeXion',
     owner: '',
     navLinks: [
       { name: 'Talentos', path: '/talentos' },

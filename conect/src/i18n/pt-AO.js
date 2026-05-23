@@ -30,8 +30,7 @@ const ptAO = {
     durationLabel: 'Duração indicada',
     companiesEyebrow: 'Empresas',
     companiesTitle: 'Vagas nacionais de estágio',
-    companiesDescription:
-      'Empresas podem anunciar oportunidades e indicar curso, competências, local, prazo e duração do estágio.',
+    companiesDescription: '',
     opportunityMode: 'Modelo',
     opportunityDuration: 'Duração',
     opportunityArea: 'Área',

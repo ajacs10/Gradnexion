@@ -42,6 +42,7 @@ function AppContent({
   handleCreateGraduate,
   handleLogin,
   handleCreateOpportunity,
+  handleApplyOpportunity,
   handleStudentMovedToInternship,
   handleUpdateProfile,
   handleLogout,
@@ -71,9 +72,22 @@ function AppContent({
     },
   ];
 
+  const [companySearch, setCompanySearch] = useState('');
+
+  useEffect(() => {
+    if (session.role !== 'student' || location.pathname !== '/vagas') {
+      setCompanySearch('');
+    }
+  }, [location.pathname, session.role]);
+
   return (
     <div className="app-container">
-      <Header session={session} onLogout={handleLogout} />
+      <Header
+        session={session}
+        onLogout={handleLogout}
+        companySearch={companySearch}
+        onCompanySearchChange={setCompanySearch}
+      />
       <Routes>
         <Route
           path="/"
@@ -127,7 +141,13 @@ function AppContent({
           path="/vagas"
           element={
             <ProtectedRoute session={session} allowedRoles={['student']}>
-              <OpportunitiesPage graduates={graduates} opportunities={opportunities} session={session} />
+              <OpportunitiesPage
+                graduates={graduates}
+                opportunities={opportunities}
+                session={session}
+                companySearch={companySearch}
+                onApplyOpportunity={handleApplyOpportunity}
+              />
             </ProtectedRoute>
           }
         />
@@ -202,10 +222,14 @@ function App() {
 
   const refreshNetwork = async (currentSession = session) => {
     const studentArea = currentSession.role === 'student' ? currentSession.profile?.course : '';
+    const studentId = currentSession.role === 'student' ? currentSession.profile?.id : '';
     const companyId = currentSession.role === 'company' ? currentSession.profile?.id : '';
+    const opportunityParams = new URLSearchParams();
+    if (studentArea) opportunityParams.set('area', studentArea);
+    if (studentId) opportunityParams.set('studentId', studentId);
     const [students, vacancies] = await Promise.all([
       apiGet(`/api/students${companyId ? `?companyId=${companyId}` : ''}`),
-      apiGet(`/api/opportunities${studentArea ? `?area=${encodeURIComponent(studentArea)}` : ''}`),
+      apiGet(`/api/opportunities${opportunityParams.toString() ? `?${opportunityParams.toString()}` : ''}`),
     ]);
     setGraduates(students);
     setOpportunities(vacancies);
@@ -272,6 +296,14 @@ function App() {
     await refreshNetwork(session);
   };
 
+  const handleApplyOpportunity = async (opportunityId) => {
+    if (session.role !== 'student' || !session.profile?.id) return;
+    await apiPost(`/api/opportunities/${opportunityId}/applications`, {
+      studentId: session.profile.id,
+    });
+    await refreshNetwork(session);
+  };
+
   const handleStudentMovedToInternship = () => {
     setSession((current) => {
       if (current.role !== 'company') return current;
@@ -295,6 +327,7 @@ function App() {
         handleCreateGraduate={handleCreateGraduate}
         handleLogin={handleLogin}
         handleCreateOpportunity={handleCreateOpportunity}
+        handleApplyOpportunity={handleApplyOpportunity}
         handleStudentMovedToInternship={handleStudentMovedToInternship}
         handleUpdateProfile={handleUpdateProfile}
         handleLogout={handleLogout}
