@@ -18,7 +18,7 @@ A arquitetura do ecossistema foi projetada sob o princípio da **Separação de 
 *   **Mobile Client (React Native / Expo SDK 55):** Desenvolvido com uma arquitetura monorepo nativa. A estilização via **NativeWind v4** unifica o compilador de estilos através da engine do Tailwind, garantindo consistência visual exata entre Web e Mobile sem overhead de runtime.
 
 ### 2. Abstração de Lógica de Negócios (Regra dos 80%)
-Para evitar acoplamento rígido na camada de visualização, **80% de toda a lógica operacional** (chamadas de API, transformações de esquemas, gerenciamento de estados globais) reside estritamente em **Custom Hooks** e **Services isolados**. Componentes visuais atuam puramente como funções puras de renderização ($UI = f(State)$).
+Para evitar acoplamento rígido na camada de visualização, **80% de toda a lógica operacional** (chamadas de API, transformações de esquemas, gerenciamento de estados globais) reside estritamente em **Custom Hooks** e **Services isolados**. Componentes visuais atuam puramente como funções puras de renderização.
 
 ---
 
@@ -36,7 +36,7 @@ Para evitar acoplamento rígido na camada de visualização, **80% de toda a ló
 
 ## 📊 Modelagem de Dados & Fluxo de Match (3NR)
 
-A persistência adota a Terceira Forma Normal (3NR) para garantir anomalia zero em operações de escrita concorrente. Abaixo está o fluxo síncrono que rege a criação de um *pipeline* de talentos automatizado:
+A persistência adota a Terceira Forma Normal (3NR) para garantir anomalia zero em operações de escrita concorrente. Abaixo está o fluxo síncrono correto que rege a criação de um *pipeline* de talentos automatizado:
 
 ```mermaid
 sequenceDiagram
@@ -47,17 +47,17 @@ sequenceDiagram
     participant DB as PostgreSQL (3NR)
     
     F->>API: POST /api/v1/profiles (Dados Académicos + Portfólio)
-    Active database API
+    activate API
     API->>DB: Upsert StudentProfile & Skills (Normalized)
     DB-->>API: Persistido com Sucesso
-    Deactivate database API
+    deactivate API
     
     E->>API: POST /api/v1/jobs (Requisitos de Competência)
-    Active database API
+    activate API
     API->>DB: Insert JobRequirement
     API->>API: Executa Query Transacional de Match Relacional
     API-->>E: Retorna Pipeline de Candidatos Filtrados (Match Score >= 80%)
-    Deactivate database API
+    deactivate API
     
     E->>API: POST /api/v1/connections (Solicita Entrevista)
     API-->>F: Push Notification: "Nova Oportunidade Corporativa"
