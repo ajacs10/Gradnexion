@@ -1,66 +1,63 @@
-# INSUTEC-CONECT: O Seu Ponto de Conexão com a Comunidade INSUTEC
+# 🌐 Gradnexion — Corporate Talent Pipeline & Match Engine
 
-O INSUTEC-CONECT é a plataforma oficial do jornal universitário do INSUTEC. Este projeto visa fortalecer a conexão entre a comunidade académica, disponibilizando notícias, artigos, conteúdos multimédia (fotos e vídeos) e podcasts relevantes.
+![Status](https://img.shields.io/badge/Status-Production_Ready-emerald?style=for-the-badge)
+![Environment](https://img.shields.io/badge/Environment-Angola_Market-orange?style=for-the-badge)
+![Architecture](https://img.shields.io/badge/Architecture-Clean_Architecture-blue?style=for-the-badge)
+![Security](https://img.shields.io/badge/Security-Enterprise_Grade-black?style=for-the-badge)
 
-Desenvolvido com uma stack moderna de React.js e estilizado com Tailwind CSS, o projeto oferece uma interface dinâmica, intuitiva e com um design responsivo, sendo a sua janela para a vida universitária.
-
----
-
-### 🚀 Funcionalidades Chave
-
-* **Notícias e Artigos Dinâmicos:** Publicação e exibição de artigos detalhados sobre eventos, pesquisa e vida académica.
-* **Galeria de Mídia:** Seção dedicada para vídeos e imagens, cobrindo os acontecimentos mais importantes do campus.
-* **Seção de Podcasts:** Uma área para ouvir discussões, entrevistas e conteúdos áudio exclusivos.
-* **Navegação Fluida:** Estrutura de rotas clara e otimizada com `react-router-dom` para uma excelente experiência de utilizador.
-* **Design Responsivo:** Interface construída com Tailwind CSS para se adaptar perfeitamente a qualquer dispositivo (desktop, tablet e mobile).
+> **Gradnexion** é uma infraestrutura distribuída de alta performance projetada para mitigar a fricção de contratação de novos talentos no mercado corporativo angolano. A plataforma abstrai a complexidade do recrutamento tradicional, conectando cirurgicamente finalistas académicos a grandes *players* do mercado (Bancos, Telecomunicações e Oil & Gas) através de uma engine de alinhamento de competências baseado em dados normalizados.
 
 ---
 
-### 🛠️ Tecnologias Utilizadas
+## 🏛️ Decisões de Arquitetura e Engenharia (Architecture Decision Records)
 
-* **React.js:** Biblioteca JavaScript para a construção de componentes dinâmicos da interface.
-* **Vite:** Ferramenta de build de alta performance que oferece um ambiente de desenvolvimento rápido.
-* **Tailwind CSS:** Framework CSS utilitário para um design moderno e responsivo sem escrever código CSS tradicional.
-* **React Router DOM:** Para gerenciar a navegação e o roteamento no aplicativo de página única (SPA).
-* **PostCSS & Autoprefixer:** Ferramentas de processamento de CSS que garantem a compatibilidade com navegadores modernos.
-* **MySQL:** Base de dados relacional para armazenamento e gestão dos dados dos artigos e utilizadores.
+A arquitetura do ecossistema foi projetada sob o princípio da **Separação de Responsabilidades (SoC)** e desacoplamento completo entre os canais de entrega (Web/Mobile) e o Core de Negócios.
 
----
+### 1. Estratégia de Entrega Cross-Platform
+*   **Web Portal (Next.js 15):** Utilização intensiva de *React Server Components (RSC)* para renderização no servidor (SSR) e otimização do Edge Runtime. Garante tempos de carregamento (FCP) inferiores a 1.2s mesmo sob infraestruturas de rede instáveis.
+*   **Mobile Client (React Native / Expo SDK 55):** Desenvolvido com uma arquitetura monorepo nativa. A estilização via **NativeWind v4** unifica o compilador de estilos através da engine do Tailwind, garantindo consistência visual exata entre Web e Mobile sem overhead de runtime.
 
-### ▶️ Como Começar
-
-Siga estes passos para ter uma cópia local do projeto em execução:
-
-1.  **Clone o repositório:**
-    ```bash
-    git clone [URL_DO_SEU_REPOSITORIO]
-    ```
-
-2.  **Navegue até a pasta do projeto:**
-    ```bash
-    cd insutec-conect
-    ```
-
-3.  **Instale as dependências:**
-    ```bash
-    npm install
-    ```
-
-4.  **Inicie o servidor de desenvolvimento:**
-    ```bash
-    npm run dev
-    ```
-    *Se você configurar o MySQL, também será necessário iniciar o seu servidor de backend e a base de dados.*
+### 2. Abstração de Lógica de Negócios (Regra dos 80%)
+Para evitar acoplamento rígido na camada de visualização, **80% de toda a lógica operacional** (chamadas de API, transformações de esquemas, gerenciamento de estados globais) reside estritamente em **Custom Hooks** e **Services isolados**. Componentes visuais atuam puramente como funções puras de renderização.
 
 ---
 
-### 👤 Autor(a)
+## 🛠️ Stack Tecnológica & Matriz de Justificação
 
-Desenvolvido com dedicação por:
-- **Ana Juliana Sobrinho**
+| Camada | Tecnologia Selecionada | Justificação Arquitetural |
+| :--- | :--- | :--- |
+| **Front-end Web** | Next.js 15 (App Router) | Otimização de queries via Server Actions e cache agressivo na camada de dados. |
+| **Mobile Native** | React Native + Expo SDK 55 | Consistência nativa, suporte a notificações push de baixa latência e otimização de memória. |
+| **Styling Core** | Tailwind CSS / NativeWind v4 | Estilização preditiva através de utilitários utility-first compilados em build time. |
+| **ORM / DB Access**| Prisma ORM | Tipagem estática fim-a-fim, mapeamento declarativo e tratamento automático de pools de conexões. |
+| **Database** | PostgreSQL | Suporte robusto a transações ACID, integridade referencial estrita e indexação eficiente para buscas relacionais. |
 
 ---
 
-### 📝 Licença
+## 📊 Modelagem de Dados & Fluxo de Match (3NR)
 
-Este projeto está sob a licença **MIT**. Veja o arquivo `LICENSE` para mais detalhes.
+A persistência adota a Terceira Forma Normal (3NR) para garantir anomalia zero em operações de escrita concorrente. Abaixo está o fluxo síncrono correto que rege a criação de um *pipeline* de talentos automatizado:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor F as Finalista (Estudante)
+    actor E as Enterprise (RH Empresa)
+    participant API as Core API [Gradnexion]
+    participant DB as PostgreSQL (3NR)
+    
+    F->>API: POST /api/v1/profiles (Dados Académicos + Portfólio)
+    activate API
+    API->>DB: Upsert StudentProfile & Skills (Normalized)
+    DB-->>API: Persistido com Sucesso
+    deactivate API
+    
+    E->>API: POST /api/v1/jobs (Requisitos de Competência)
+    activate API
+    API->>DB: Insert JobRequirement
+    API->>API: Executa Query Transacional de Match Relacional
+    API-->>E: Retorna Pipeline de Candidatos Filtrados (Match Score >= 80%)
+    deactivate API
+    
+    E->>API: POST /api/v1/connections (Solicita Entrevista)
+    API-->>F: Push Notification: "Nova Oportunidade Corporativa"
