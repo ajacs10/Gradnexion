@@ -3304,6 +3304,279 @@
   color: #ffffff;
 }
 
+.student-profile-page-shell .student-profile-hero-company {
+  display: block;
+  min-height: calc(100vh - 76px);
+  border-bottom: 0;
+  background:
+    radial-gradient(circle at 18% 8%, rgba(67, 83, 255, 0.12), transparent 26rem),
+    linear-gradient(180deg, #eef4ff 0%, #f8fbff 100%);
+  padding: 1.6rem clamp(1.25rem, 3vw, 2.5rem) 2rem;
+}
+
+.student-profile-page-shell .student-profile-hero-company::before {
+  display: none;
+}
+
+.student-profile-company-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 390px);
+  gap: 1.6rem;
+  width: min(100%, 1460px);
+  min-height: calc(100vh - 76px - 3.6rem);
+  margin: 0 auto;
+  align-items: start;
+}
+
+.student-profile-company-content {
+  display: grid;
+  gap: 1.1rem;
+  align-content: start;
+}
+
+.student-profile-main-card,
+.student-profile-detail-grid article,
+.student-profile-page-shell .student-profile-hero-company .conference-panel {
+  border: 1px solid rgba(226, 232, 255, 0.92);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 20px 50px rgba(16, 24, 40, 0.08);
+}
+
+.student-profile-main-card {
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  gap: clamp(1.35rem, 3vw, 2rem);
+  align-items: center;
+  padding: 1.55rem;
+  min-height: 420px;
+}
+
+.student-profile-page-shell .student-profile-hero-company .student-photo-status-wrapper {
+  position: relative;
+  display: block;
+  padding: 0;
+  border-radius: 12px;
+  background: transparent;
+}
+
+.student-profile-page-shell .student-profile-hero-company .student-profile-photo {
+  width: 100%;
+  max-height: none;
+  aspect-ratio: 4 / 5.6;
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(67, 83, 255, 0.32), transparent 14rem),
+    #101a48;
+  box-shadow: inset 0 0 45px rgba(67, 83, 255, 0.18);
+}
+
+.student-profile-page-shell .student-profile-hero-company .student-profile-photo-fallback {
+  font-size: clamp(2.8rem, 6vw, 4.2rem);
+}
+
+.student-profile-page-shell .student-profile-hero-company .student-online-status {
+  position: absolute;
+  left: 50%;
+  bottom: 1rem;
+  display: inline-flex;
+  gap: 0.45rem;
+  align-items: center;
+  width: auto;
+  min-height: 36px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: rgba(9, 18, 48, 0.78);
+  color: #ffffff !important;
+  padding: 0 0.9rem;
+  font-size: 0.88rem;
+  font-weight: 900;
+  backdrop-filter: blur(10px);
+}
+
+.student-profile-page-shell .student-profile-hero-company .online-indicator {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #22c55e;
+}
+
+.student-profile-company-summary {
+  min-width: 0;
+}
+
+.student-profile-page-shell .student-profile-hero-company .student-profile-company-summary h2 {
+  margin: 0.4rem 0 0;
+  color: #101735;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.05;
+}
+
+.student-profile-page-shell .student-profile-hero-company .student-profile-company-summary p,
+.student-profile-page-shell .student-profile-hero-company .student-profile-company-summary span,
+.student-profile-page-shell .student-profile-hero-company .student-profile-company-summary strong,
+.student-profile-page-shell .student-profile-hero-company .student-profile-company-summary a {
+  color: #344054;
+}
+
+.student-profile-page-shell .student-profile-hero-company .student-profile-company-summary .eyebrow {
+  display: inline-flex;
+  width: fit-content;
+  margin: 0;
+  border-radius: 8px;
+  background: #edf1ff;
+  color: #3445ff;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
+.student-profile-page-shell .student-profile-hero-company .profile-link-row {
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.student-profile-page-shell .student-profile-hero-company .profile-link-row > a.secondary-action {
+  width: fit-content;
+  min-height: 40px;
+  padding: 0 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.student-profile-page-shell .student-profile-hero-company .student-profile-role {
+  color: #0b5fff;
+  font-weight: 900;
+}
+
+.student-contact-card {
+  display: grid;
+  gap: 0.25rem;
+  min-width: min(100%, 260px);
+  border: 1px solid #e4e7ec;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 0.75rem 0.9rem;
+  box-shadow: 0 12px 26px rgba(16, 24, 40, 0.06);
+}
+
+.student-contact-card span {
+  color: #344054 !important;
+  font-weight: 800;
+}
+
+.student-profile-page-shell .student-profile-hero-company .graduate-meta span,
+.student-profile-page-shell .student-profile-hero-company .secondary-action {
+  border-color: #e4e7ec;
+  background: #ffffff;
+  color: #101828 !important;
+}
+
+.student-profile-page-shell .student-profile-hero-company .graduate-skill-tags span {
+  background: #f2f4f7;
+}
+
+.student-profile-detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr);
+  gap: 1.1rem;
+}
+
+.student-profile-detail-grid article {
+  padding: 1.4rem;
+}
+
+.student-profile-detail-grid h3 {
+  margin: 0 0 1rem;
+  color: #101735;
+  font-size: 1.15rem;
+}
+
+.student-profile-detail-grid p {
+  margin: 0;
+  color: #405174 !important;
+  line-height: 1.65;
+  font-weight: 700;
+}
+
+.student-profile-note-list,
+.student-skill-list {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.student-profile-note-list span,
+.student-skill-list span {
+  border-radius: 8px;
+  background: #f8faff;
+  color: #344054 !important;
+  padding: 0.75rem 0.85rem;
+  font-weight: 800;
+}
+
+.student-skill-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.student-profile-page-shell .student-profile-hero-company .conference-panel {
+  position: static;
+  top: auto;
+  align-self: start !important;
+  justify-self: end;
+  width: 100%;
+  margin-top: 0;
+  padding: 1.35rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.student-profile-page-shell .student-profile-hero-company .conference-panel .interview-form {
+  margin: 0.85rem 0;
+  padding: 0.85rem 0;
+}
+
+.student-profile-page-shell .student-profile-hero-company .conference-panel h3 {
+  margin-bottom: 0.35rem;
+  color: #101735 !important;
+}
+
+.student-profile-page-shell .student-profile-hero-company .conference-panel .action-button,
+.student-profile-page-shell .student-profile-hero-company .conference-panel > .secondary-action {
+  width: 100%;
+  justify-content: center;
+  text-align: center;
+}
+
+@media (max-width: 1120px) {
+  .student-profile-company-layout {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+@media (max-width: 780px) {
+  .student-profile-page-shell .student-profile-hero-company {
+    padding: 1rem 16px 2rem;
+  }
+
+  .student-profile-main-card,
+  .student-profile-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .student-profile-page-shell .student-profile-hero-company .student-profile-photo {
+    max-width: 280px;
+    margin: 0 auto;
+  }
+
+  .student-skill-list {
+    grid-template-columns: 1fr;
+  }
+}
+
 .linkedin-note {
   margin: 0 0 1rem;
   border: 1px solid #fedf89;
