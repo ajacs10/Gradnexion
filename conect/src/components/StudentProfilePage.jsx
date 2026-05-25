@@ -293,10 +293,15 @@ function StudentProfilePage({ graduates, onStudentMovedToInternship, session }) 
                       </a>
                     )}
 
-                    {(student.email || student.phone) && (
-                      <div className="student-contact-card">
-                        {student.email && <span>{student.email}</span>}
-                        {student.phone && <span>{student.phone}</span>}
+                    {student.email && (
+                      <div className="student-contact-card student-contact-email">
+                        <span>{student.email}</span>
+                      </div>
+                    )}
+
+                    {student.phone && (
+                      <div className="student-contact-card student-contact-phone">
+                        <span>{student.phone}</span>
                       </div>
                     )}
                   </div>
@@ -306,13 +311,6 @@ function StudentProfilePage({ graduates, onStudentMovedToInternship, session }) 
                     <span>Turma {student.year}</span>
                   </div>
 
-                  {student.skills?.length > 0 && (
-                    <div className="graduate-meta graduate-skill-tags">
-                      {student.skills.map((skill) => (
-                        <span key={skill}>{skill}</span>
-                      ))}
-                    </div>
-                  )}
                 </div>
               </article>
 
@@ -321,9 +319,7 @@ function StudentProfilePage({ graduates, onStudentMovedToInternship, session }) 
                   <h3>Sobre mim</h3>
                   <p>{student.quote}</p>
                   <div className="student-profile-note-list">
-                    <span>Perfil académico validado pela informação cadastrada</span>
                     {student.portfolioUrl && <span>Portfólio disponível para análise</span>}
-                    {student.universityDeclarationUrl && <span>Declaração anexada ao perfil</span>}
                   </div>
                 </article>
 

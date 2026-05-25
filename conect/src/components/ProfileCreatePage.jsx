@@ -76,6 +76,109 @@ function ProfileCreatePage({ onCreateCompany, onCreateGraduate }) {
     setForm((current) => ({ ...current, [name]: value }));
   };
 
+  const institutions = [
+    'Universidade Agostinho Neto',
+    'Universidade de Luanda',
+    'Universidade Katyavala Bwila',
+    'Universidade José Eduardo dos Santos',
+    'Universidade Cuíto Cuanavale',
+    'Universidade Kimpa Vita',
+    'Universidade Lueji a Nkonde',
+    'Universidade Mandume Ya Ndemufayo',
+    'Universidade 11 de Novembro',
+    'Universidade do Namibe',
+    'Universidade Rainha Njinga a Mbande',
+    'Instituto Superior de Ciências de Educação de Luanda',
+    'Instituto Superior de Ciências de Educação de Benguela',
+    'Instituto Superior de Ciências de Educação de Cabinda',
+    'Instituto Superior de Ciências de Educação do Sumbe',
+    'Instituto Superior de Ciências de Educação do Huambo',
+    'Instituto Superior de Ciências de Educação da Huíla',
+    'Instituto Superior de Ciências de Educação do Uíge',
+    'Instituto Superior Politécnico do Cuanza Sul',
+    'Instituto Superior Politécnico do Soyo',
+    'Instituto Superior Politécnico do Bié',
+    'Instituto Superior Politécnico de Ndalatando',
+    'Instituto Superior Politécnico do Moxico',
+    'Escola Superior Pedagógica do Bengo',
+    'Escola Superior Pedagógica do Bié',
+    'Escola Superior Pedagógica do Cuanza Norte',
+    'Escola Superior de Ciências Sociais, Artes e Humanidades',
+    'Instituto Superior Técnico Militar',
+    'Instituto Superior de Ciências Policiais e Criminais General Osvaldo Serra Van-Dúnem',
+    'Academia de Ciências Sociais e Tecnologia',
+    'Instituto Superior Politécnico do Bengo',
+    'Universidade Católica de Angola',
+    'Universidade Jean Piaget de Angola',
+    'Universidade Lusíada de Angola',
+    'Universidade Independente de Angola',
+    'Universidade Gregório Semedo',
+    'Universidade de Belas',
+    'Universidade Óscar Ribas',
+    'Universidade Privada de Angola',
+    'Universidade Técnica de Angola',
+    'Universidade Metodista de Angola',
+    'Instituto Superior Politécnico de Tecnologias e Ciências',
+    'Instituto Superior Politécnico de Ciências e Tecnologia (INSUTEC)',
+    'Instituto Superior Politécnico Katangoji',
+    'Instituto Superior de Ciências de Administração e Humanas',
+    'Instituto Superior de Ciências Sociais e Relações Internacionais',
+    'Instituto Superior Politécnico Internacional de Angola',
+    'Instituto Superior Politécnico Metropolitano',
+    'Instituto Superior Politécnico Alvorecer da Juventude',
+    'Instituto Superior Técnico de Angola',
+    'Instituto Superior Politécnico do Cazenga',
+    'Instituto Superior Politécnico Kalandula de Angola',
+    'Instituto Superior Politécnico de Kangonjo',
+    'Instituto Superior Politécnico Atlântida',
+    'Instituto Superior de Angola',
+    'Instituto Superior Politécnico do Zango',
+    'Instituto Superior Politécnico Tocoísta',
+    'Instituto Superior Politécnico Deolinda Rodrigues',
+    'Instituto Superior Técnico de Administração e Finanças',
+    'Instituto Superior Politécnico Intercontinental de Luanda',
+    'Instituto Superior Politécnico Nelson Mandela',
+    'Instituto Superior Politécnico Crescente',
+    'Instituto Superior Politécnico do Bita',
+    'Instituto Superior Politécnico Privado do Kilamba',
+    'Escola Superior Técnica de Ciências do Desporto',
+    'Instituto Superior Politécnico de Porto Amboim',
+    'Instituto Superior Politécnico do Libolo',
+    'Instituto Superior Politécnico de Benguela',
+    'Instituto Superior Politécnico Lusíada de Benguela',
+    'Instituto Superior Politécnico Jean Piaget de Benguela',
+    'Instituto Superior Politécnico Maravilha',
+    'Instituto Superior Politécnico Católico de Benguela',
+    'Escola Superior Politécnica de Benguela',
+    'Instituto Superior Politécnico Sol Nascente',
+    'Instituto Superior Politécnico Lusíada do Huambo',
+    'Instituto Superior Politécnico de Humanidades e Tecnologias – EKUIKUI II',
+    'Instituto Superior Politécnico da Caála',
+    'Instituto Superior Politécnico Católico do Huambo',
+    'Instituto Superior Politécnico do Cuito',
+    'Instituto Superior Politécnico Ndunduma',
+    'Instituto Superior Politécnico Independente',
+    'Instituto Superior Politécnico Gregório Semedo',
+    'Instituto Superior Politécnico da Tundavala',
+    'Instituto Superior Politécnico Sinodal',
+    'Instituto Superior Politécnico Evangélico do Lubango',
+    'Instituto Superior Politécnico Cardeal Dom Alexandre do Nascimento',
+    'Instituto Superior Politécnico Privado da Catepa',
+    'Instituto Superior Politécnico Walinga',
+    'Instituto Superior Politécnico Privado do Luena',
+    'Instituto Superior Politécnico Lusíada da Lunda Sul',
+    'Instituto Superior Politécnico de Cabinda',
+    'Instituto Superior Politécnico Lusíada de Cabinda',
+    'Instituto Superior Politécnico Privado do Zaire',
+    'Instituto Superior Politécnico Privado do Uíge',
+    'Instituto Superior Politécnico Privado de Menongue',
+    'Instituto Superior de Ombaka',
+    'Instituto Superior Privado Nzenzu Estrela',
+    'Instituto Superior Nimi ya Lukeni',
+    'Universidade Internacional do Cuanza',
+    'Escola Superior de Saúde Castelo Luanda',
+  ];
+
   const handleCompanyChange = (event) => {
     const { name, value } = event.target;
     setCompanyForm((current) => ({ ...current, [name]: value }));
@@ -187,8 +290,13 @@ function ProfileCreatePage({ onCreateCompany, onCreateGraduate }) {
                   />
                 </label>
                 <label>
-                  <span>{t.home.currentArea} <RequiredMark /></span>
-                  <input name="role" value={form.role} onChange={handleFormChange} required />
+                  <span>Área de interesse</span>
+                  <input
+                    name="role"
+                    value={form.role}
+                    onChange={handleFormChange}
+                    placeholder="Ex.: Desenvolvimento web, Marketing, Recursos Humanos"
+                  />
                 </label>
               </div>
               <div className="form-row">
@@ -251,11 +359,17 @@ function ProfileCreatePage({ onCreateCompany, onCreateGraduate }) {
                   <span>Universidade <RequiredMark /></span>
                   <input
                     name="university"
+                    list="institutions"
                     value={form.university}
                     onChange={handleFormChange}
-                    placeholder="Ex.: INSUTEC, ISPTEC, UAN..."
+                    placeholder="Escolhe ou escreve a tua universidade"
                     required
                   />
+                  <datalist id="institutions">
+                    {institutions.map((inst) => (
+                      <option key={inst} value={inst} />
+                    ))}
+                  </datalist>
                 </label>
                 <label>
                   Fotografia

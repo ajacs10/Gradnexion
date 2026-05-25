@@ -2171,7 +2171,8 @@
   grid-template-columns: minmax(0, 0.85fr) minmax(320px, 0.65fr);
   gap: 2rem;
   align-items: start;
-  min-height: calc(100vh - 180px);
+  /* Fill viewport minus header height to avoid unnecessary vertical scroll */
+  min-height: calc(100vh - 76px);
   padding: 4rem 0;
 }
 
@@ -2182,7 +2183,8 @@
 .login-visual {
   position: relative;
   overflow: hidden;
-  min-height: 100vh;
+  /* Ensure visual section fits the viewport under the header */
+  min-height: calc(100vh - 76px);
   margin: 0;
   grid-template-columns: minmax(320px, 560px) minmax(320px, 440px);
   justify-content: center;
@@ -3454,7 +3456,8 @@
 .student-contact-card {
   display: grid;
   gap: 0.25rem;
-  min-width: min(100%, 260px);
+  width: 100%;
+  min-width: 0;
   border: 1px solid #e4e7ec;
   border-radius: 8px;
   background: #ffffff;
@@ -3462,9 +3465,70 @@
   box-shadow: 0 12px 26px rgba(16, 24, 40, 0.06);
 }
 
+.student-profile-page-shell .student-profile-hero-company .profile-link-row {
+  /* Keep profile action links aligned on the x axis */
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+/* Make action links and contact cards the same height and vertically centered */
+.student-profile-page-shell .student-profile-hero-company .profile-link-row > a.secondary-action,
+.student-profile-page-shell .student-profile-hero-company .profile-link-row .student-contact-card {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 0.9rem;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+/* Ensure long emails/phones break nicely without increasing tile height excessively */
+.student-profile-page-shell .student-profile-hero-company .profile-link-row .student-contact-card span,
+.student-profile-page-shell .student-profile-hero-company .profile-link-row > a.secondary-action {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+
+.student-profile-page-shell .student-profile-hero-company .student-contact-email {
+  /* Do not force the email card to span the full width; let it size to content */
+  grid-column: auto;
+  width: fit-content;
+  max-width: 420px;
+}
+
+/* Ensure contact cards inside the profile link row size to their content */
+.student-profile-page-shell .student-profile-hero-company .profile-link-row .student-contact-card {
+  width: fit-content;
+  min-width: 0;
+}
+
+.student-profile-page-shell .student-profile-hero-company .student-contact-phone {
+  grid-column: auto;
+  width: fit-content;
+  max-width: 240px;
+}
+
+/* Present the "sobre mim" notes as a compact vertical list */
+.student-profile-note-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-top: 0.75rem;
+  color: #475467;
+}
+
 .student-contact-card span {
   color: #344054 !important;
   font-weight: 800;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .student-profile-page-shell .student-profile-hero-company .graduate-meta span,
