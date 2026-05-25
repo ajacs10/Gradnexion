@@ -1,12 +1,12 @@
 // src/components/Header.jsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import journalContent from '../data/journalContent';
 import { t } from '../i18n';
 import './Header.css';
 
 const publicLinks = [
-  { name: 'Entrar', path: '/login' },
+  { name: 'Entrar', path: '/login', variant: 'primary' },
 ];
 
 const studentLinks = [
@@ -32,6 +32,7 @@ const getInitials = (name = '') =>
 
 function Header({ session, onLogout, companySearch, onCompanySearchChange }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { title } = journalContent.header;
@@ -51,6 +52,28 @@ function Header({ session, onLogout, companySearch, onCompanySearchChange }) {
         : studentLinks;
   const profileName = session?.profile?.name || session?.profile?.company;
   const showCompanySearch = session?.isRegistered && session.role === 'student' && location.pathname === '/vagas';
+
+  useEffect(() => {
+    if (session?.isRegistered) {
+      setIsScrolled(false);
+      return undefined;
+    }
+
+    const transparentTopPages = new Set(['/', '/login', '/perfil/novo']);
+    if (!transparentTopPages.has(location.pathname)) {
+      setIsScrolled(true);
+      return undefined;
+    }
+
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 520);
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [location.pathname, session?.isRegistered]);
 
   const handleLogout = () => {
     setMenuOpen(false);
@@ -84,11 +107,17 @@ function Header({ session, onLogout, companySearch, onCompanySearchChange }) {
   };
 
   return (
-    <header className="site-header">
+    <header
+      className={
+        session?.isRegistered
+          ? 'site-header'
+          : `site-header site-header-public${isScrolled ? ' is-scrolled' : ''}`
+      }
+    >
       <div className="header-container">
         <Link to={homePath} className="brand" onClick={() => setMenuOpen(false)}>
           <span className="brand-mark" aria-hidden="true">
-            <img src="/src/assets/imagem/favicon.svg" alt="Finalista Connect" />
+            <img src="/src/assets/imagem/favicon.svg" alt="GradNeXion" />
           </span>
           <span>
             <strong>{title}</strong>
@@ -129,7 +158,11 @@ function Header({ session, onLogout, companySearch, onCompanySearchChange }) {
           <ul className="nav-links">
             {navLinks.map((link) => (
               <li key={link.name}>
-                <Link to={link.path} onClick={(event) => handleNavigate(event, link.path)}>
+                <Link
+                  to={link.path}
+                  className={link.variant === 'primary' ? 'nav-primary-link' : undefined}
+                  onClick={(event) => handleNavigate(event, link.path)}
+                >
                   {link.name}
                 </Link>
               </li>

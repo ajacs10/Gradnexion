@@ -98,7 +98,7 @@ const ptAO = {
   },
   about: {
     eyebrow: 'Sobre o projeto',
-    title: 'Finalista Connect é uma rede independente entre finalistas e empresas.',
+    title: 'GradNeXion é uma rede independente entre finalistas e empresas.',
     text:
       'A iniciativa foi pensada para organizar perfis de finalistas, recém-formados e oportunidades de estágio. Não é um portal oficial da INSUTEC, mas usa as áreas de formação divulgadas publicamente pela instituição como base para categorizar talentos e vagas.',
     principlesLabel: 'Princípios do projeto',

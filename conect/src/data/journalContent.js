@@ -100,8 +100,8 @@ const journalContent = {
           description:
             'Projetos de software, dashboards e protótipos ajudam recrutadores a avaliar competências.',
           fullText:
-            'A área de Informática e Sistemas de Informação tem produzido estudantes com forte interesse em produto digital, dados e automação. O Finalista Connect organiza estes percursos num mural público, destacando competências, projetos finais e disponibilidade para estágio. A proposta é simples: transformar nomes de finalistas em perfis encontráveis por empresas, colegas e comunidades tecnológicas.',
-          author: 'Redação Finalista Connect',
+            'A área de Informática e Sistemas de Informação tem produzido estudantes com forte interesse em produto digital, dados e automação. A GradNeXion organiza estes percursos num mural público, destacando competências, projetos finais e disponibilidade para estágio. A proposta é simples: transformar nomes de finalistas em perfis encontráveis por empresas, colegas e comunidades tecnológicas.',
+          author: 'Redação GradNeXion',
           time: '09 Mai 2026',
           likes: 32,
           dislikes: 0,
@@ -116,7 +116,7 @@ const journalContent = {
             'Nome, curso, turma, competências e uma frase clara podem abrir portas para networking.',
           fullText:
             'Um bom perfil universitário não precisa parecer um currículo longo. O essencial é mostrar curso, ano de conclusão, área de interesse, competências e uma evidência concreta: projeto final, estágio, artigo, voluntariado ou experiência de laboratório. Na rede, cada finalista aparece por área para facilitar descoberta por empresas.',
-          author: 'Finalista Connect',
+          author: 'GradNeXion',
           time: '08 Mai 2026',
           likes: 21,
           dislikes: 0,
@@ -131,7 +131,7 @@ const journalContent = {
             'A rede organiza talentos por áreas como Direito, Finanças, Redes, RH, Turismo, Logística e Tecnologia.',
           fullText:
             'A estrutura da rede foi inspirada nas licenciaturas divulgadas publicamente pela INSUTEC: Direito, Ciências Criminais, Hotelaria & Turismo, Logística e Gestão Comercial, Gestão de Recursos Humanos, Contabilidade & Finanças, Redes e Telecomunicações, e Informática e Sistemas de Informação. A intenção é facilitar o encontro entre empresas e finalistas de diferentes áreas, sem assumir caráter institucional.',
-          author: 'Redação Finalista Connect',
+          author: 'Redação GradNeXion',
           time: '07 Mai 2026',
           likes: 18,
           dislikes: 0,
@@ -158,7 +158,7 @@ const journalContent = {
       day: '25',
       month: 'Mai',
       title: 'Especial: mulheres em tecnologia e negócios',
-      meta: 'Finalista Connect | Rede comunitária',
+      meta: 'GradNeXion | Rede comunitária',
     },
   ],
   highlights: {

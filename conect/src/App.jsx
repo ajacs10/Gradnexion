@@ -247,7 +247,7 @@ function App() {
   };
 
   useEffect(() => {
-    const savedSession = window.localStorage.getItem('finalista-connect-session');
+    const savedSession = window.localStorage.getItem('gradnexion-session');
     if (savedSession) {
       const parsed = JSON.parse(savedSession);
       setSession(parsed);
@@ -260,7 +260,7 @@ function App() {
 
   const completeRegistration = async (newSession) => {
     setSession(newSession);
-    window.localStorage.setItem('finalista-connect-session', JSON.stringify(newSession));
+    window.localStorage.setItem('gradnexion-session', JSON.stringify(newSession));
     await refreshNetwork(newSession);
   };
 
@@ -284,7 +284,7 @@ function App() {
 
   const handleLogout = () => {
     setSession({ role: null, isRegistered: false, profile: null });
-    window.localStorage.removeItem('finalista-connect-session');
+    window.localStorage.removeItem('gradnexion-session');
     setGraduates([]);
     setOpportunities([]);
     refreshNetwork({ role: null, profile: null }).catch(console.error);
@@ -333,7 +333,7 @@ function App() {
           internshipCount: Number(current.profile.internshipCount ?? 0) + 1,
         },
       };
-      window.localStorage.setItem('finalista-connect-session', JSON.stringify(next));
+      window.localStorage.setItem('gradnexion-session', JSON.stringify(next));
       return next;
     });
   };
