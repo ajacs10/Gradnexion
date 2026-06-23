@@ -17,6 +17,7 @@ import CompanyOpportunityPage from './components/CompanyOpportunityPage';
 import AdminPage from './components/AdminPage';
 import { apiGet, apiPatch, apiPost, apiDelete } from './services/api';
 import './App.css';
+import Footer from './components/Footer';
 
 const getHomePath = (role) => {
   if (role === 'admin') return '/admin';
@@ -182,42 +183,7 @@ function AppContent({
         <Route path="/news" element={<NewsPage />} />
         <Route path="/news/:id" element={<ArticlePage />} />
       </Routes>
-      {showFooter && (
-        <footer className="site-footer">
-          <div className="site-footer-grid">
-            {footerSections.map((section) => (
-              <nav key={section.title} aria-label={section.title}>
-                <h2>{section.title}</h2>
-                {section.links.map((link) => (
-                  <a key={link} href="/about">{link}</a>
-                ))}
-              </nav>
-            ))}
-            <address>
-              <h2>Informações de Contactos</h2>
-              <a href="https://www.anasobrinho.me/" target="_blank" rel="noreferrer">
-                anasobrinho.me
-              </a>
-              <a href="mailto:contacto@shecodeajacs.com">contacto@shecodeajacs.com</a>
-              <a href="/about">Suporte</a>
-            </address>
-          </div>
-          <div className="site-footer-bottom">
-            <span>© 2026 Todos Direitos Reservados SheCodeAjacs.</span>
-            <div>
-              <a href="https://www.anasobrinho.me/" target="_blank" rel="noreferrer">
-                anasobrinho.me
-              </a>
-              <span>|</span>
-              <a href="/about">Política de Privacidade</a>
-              <span>|</span>
-              <a href="/about">Termos e Condições</a>
-              <span>|</span>
-              <a href="/about">Política Cookies</a>
-            </div>
-          </div>
-        </footer>
-      )}
+      {showFooter && <Footer />}
     </div>
   );
 }
